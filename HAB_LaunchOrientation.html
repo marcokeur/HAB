@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Luchthavens Nederland incl. 8 km zone</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script>
+// This example creates circles on the map, representing
+// populations in North America.
+
+// First, create an object containing LatLng and population for each city.
+var citymap = {};
+citymap['	1	 '] = {	 center: new google.maps.LatLng(	53.4527777777778 , 5.68388888888889	)};
+citymap['	2	 '] = {	 center: new google.maps.LatLng(	52.308225 , 4.76085833333333	)};
+citymap['	3	 '] = {	 center: new google.maps.LatLng(	52.2413888888889 , 6.04666666666667	)};
+citymap['	4	 '] = {	 center: new google.maps.LatLng(	50.9125583333333 , 5.76953611111111	)};
+citymap['	5	 '] = {	 center: new google.maps.LatLng(	51.5547222222222 , 4.5525	)};
+citymap['	6	 '] = {	 center: new google.maps.LatLng(	51.2563888888889 , 5.60194444444444	)};
+citymap['	7	 '] = {	 center: new google.maps.LatLng(	52.9225 , 4.78277777777778	)};
+citymap['	8	 '] = {	 center: new google.maps.LatLng(	53.1180555555556 , 6.12833333333333	)};
+citymap['	9	 '] = {	 center: new google.maps.LatLng(	51.4505555555556 , 5.37416666666667	)};
+citymap['	10	 '] = {	 center: new google.maps.LatLng(	52.2741666666667 , 6.88666666666667	)};
+citymap['	11	 '] = {	 center: new google.maps.LatLng(	53.1205555555556 , 6.57805555555556	)};
+citymap['	12	 '] = {	 center: new google.maps.LatLng(	52.1925 , 5.14722222222222	)};
+citymap['	13	 '] = {	 center: new google.maps.LatLng(	52.7308333333333 , 6.51583333333333	)};
+citymap['	14	 '] = {	 center: new google.maps.LatLng(	52.4552777777778 , 5.52305555555556	)};
+citymap['	15	 '] = {	 center: new google.maps.LatLng(	51.5122222222222 , 3.72916666666667	)};
+citymap['	16	 '] = {	 center: new google.maps.LatLng(	52.8166666666667 , 5.02777777777778	)};
+citymap['	17	 '] = {	 center: new google.maps.LatLng(	51.9525 , 4.43444444444444	)};
+citymap['	18	 '] = {	 center: new google.maps.LatLng(	52.9958333333333 , 7.02083333333333	)};
+citymap['	19	 '] = {	 center: new google.maps.LatLng(	53.1152777777778 , 4.83361111111111	)};
+citymap['	20	 '] = {	 center: new google.maps.LatLng(	51.3930555555556 , 6.06277777777778	)};
+citymap['	21	 '] = {	 center: new google.maps.LatLng(	53.2094444444445 , 7.03527777777778	)};
+citymap['	22	 '] = {	 center: new google.maps.LatLng(	17.4963888888889 , -62.9791666666667	)};
+citymap['	23	 '] = {	 center: new google.maps.LatLng(	12.1308333333333 , -68.2683333333333	)};
+citymap['	24	 '] = {	 center: new google.maps.LatLng(	17.6452777777778 , -63.2205555555556	)};
+citymap['	25	 '] = {	 center: new google.maps.LatLng(	52.0666638888889 , 5.87722222222222	)};
+citymap['	26	 '] = {	 center: new google.maps.LatLng(	51.5683333333333 , 4.92666666666667	)};
+citymap['	27	 '] = {	 center: new google.maps.LatLng(	53.2277777777778 , 5.76	)};
+citymap['	28	 '] = {	 center: new google.maps.LatLng(	51.6572222222222 , 5.69083333333333	)};
+citymap['	29	 '] = {	 center: new google.maps.LatLng(	51.5177777777778 , 5.85944444444444	)};
+citymap['	30	 '] = {	 center: new google.maps.LatLng(	51.4494444444444 , 4.34222222222222	)};
+citymap['	31	 '] = {	 center: new google.maps.LatLng(	52.0572222222222 , 5.92444444444445	)};
+citymap['	32	 '] = {	 center: new google.maps.LatLng(	51.2555555555556 , 3.89138888888889	)};
+citymap['	33	 '] = {	 center: new google.maps.LatLng(	52.4291666666667 , 5.67416666666667	)};
+citymap['	34	 '] = {	 center: new google.maps.LatLng(	52.5366666666667 , 4.62666666666667	)};
+citymap['	35	 '] = {	 center: new google.maps.LatLng(	51.7088888888889 , 3.71222222222222	)};
+citymap['	36	 '] = {	 center: new google.maps.LatLng(	52.4677777777778 , 6.33277777777778	)};
+citymap['	37	 '] = {	 center: new google.maps.LatLng(	51.7858333333333 , 5.88	)};
+citymap['	38	 '] = {	 center: new google.maps.LatLng(	52.6847222222222 , 5.91055555555556	)};
+citymap['	39	 '] = {	 center: new google.maps.LatLng(	51.6833333333333 , 5.54944444444444	)};
+citymap['	40	 '] = {	 center: new google.maps.LatLng(	52.2977777777778 , 4.51361111111111	)};
+citymap['	41	 '] = {	 center: new google.maps.LatLng(	50.9819444444444 , 6.0025	)};
+citymap['	42	 '] = {	 center: new google.maps.LatLng(	52.8186111111111 , 4.92861111111111	)};
+citymap['	43	 '] = {	 center: new google.maps.LatLng(	52.1272222222222 , 5.27611111111111	)};
+citymap['	44	 '] = {	 center: new google.maps.LatLng(	52.1661111111111 , 4.41805555555556	)};
+citymap['	45	 '] = {	 center: new google.maps.LatLng(	53.0844444444444 , 6.82361111111111	)};
+citymap['	46	 '] = {	 center: new google.maps.LatLng(	51.3630555555556 , 6.21611111111111	)};
+citymap['	47	 '] = {	 center: new google.maps.LatLng(	52.414841 , 4.804813	)};
+citymap['	48	 '] = {	 center: new google.maps.LatLng(	51.9797222222222 , 4.02277777777778	)};
+citymap['	49	 '] = {	 center: new google.maps.LatLng(	53.2968666666667 , 5.085625	)};
+
+
+var cityCircle;
+
+function initialize() {
+  // Create the map.
+  var mapOptions = {
+    zoom: 8,
+    center: new google.maps.LatLng(52.195867, 5.696732),
+    mapTypeId: google.maps.MapTypeId.TERRAIN
+  };
+
+  var map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+  // Construct the circle for each value in citymap.
+  // Note: We scale the area of the circle based on the population.
+  for (var city in citymap) {
+    var populationOptions = {
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      map: map,
+      center: citymap[city].center,
+      radius:4000
+    };
+    // Add the circle for this city to the map.
+    cityCircle = new google.maps.Circle(populationOptions);
+  }
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>
