@@ -1,0 +1,64 @@
+ffplay -f mpegts -i "udp://10.5.5.9:8554?fifo_size=10000"
+
+
+
+ffmpeg -f mpegts -i "udp://10.5.5.9:8554?fifo_size=10000" -f mpegts -vcodec copy udp://localhost:1000
+
+
+ffmpeg -f image2 -i "input_%05d.jpeg" -r 25 "udp://10.5.5.9:8554?fifo_size=10000"
+
+
+ffmpeg -f mpegts -i "udp://10.5.5.9:8554?fifo_size=10000" -vframes 1 test.jpeg
+
+
+http://10.5.5.9/gp/gpExec?p1=gpStreamA9&c1=start
+http://10.5.5.9/gp/gpExec?p1=gpStreamA9&c1=stop
+
+http://10.5.5.9/gp/gpExec?p1=gpStreamA9&c1=restart
+^ this command needs to be sent every 10s otherwise the stream would timeout.
+
+
+capture image:
+
+ffmpeg -f mpegts -i "udp://10.5.5.9:8554?fifo_size=10000" test.jpg
+
+  libavutil      54. 15.100 / 54. 15.100
+  libavcodec     56. 16.100 / 56. 16.100
+  libavformat    56. 16.101 / 56. 16.101
+  libavdevice    56.  3.100 / 56.  3.100
+  libavfilter     5.  4.100 /  5.  4.100
+  libswscale      3.  1.101 /  3.  1.101
+  libswresample   1.  1.100 /  1.  1.100
+  libpostproc    53.  3.100 / 53.  3.100
+[h264 @ 03749100] non-existing PPS 0 referenced
+    Last message repeated 1 times
+[h264 @ 03749100] decode_slice_header error
+[h264 @ 03749100] no frame!
+[h264 @ 03749100] non-existing PPS 0 referenced
+    Last message repeated 1 times
+[h264 @ 03749100] decode_slice_header error
+[h264 @ 03749100] no frame!
+Input #0, mpegts, from 'udp://10.5.5.9:8554?fifo_size=10000':
+  Duration: N/A, start: 1.173333, bitrate: N/A
+  Program 1
+    Stream #0:0[0x1011]: Video: h264 (High) ([27][0][0][0] / 0x001B), yuvj420p(pc, bt709), 432x240 [SAR 1:1 DAR 9:5], 25 fps, 25 tbr, 90k tbn, 50 tbc
+    Stream #0:1[0x1100]: Audio: aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, 130 kb/s
+Output #0, image2, to 'test.jpg':
+  Metadata:
+    encoder         : Lavf56.16.101
+    Stream #0:0: Video: mjpeg, yuvj420p(pc), 432x240 [SAR 1:1 DAR 9:5], q=2-31,200 kb/s, 25 fps, 25 tbn, 25 tbc
+    Metadata:
+      encoder         : Lavc56.16.100 mjpeg
+Stream mapping:
+  Stream #0:0 -> #0:0 (h264 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[image2 @ 0378d560] Could not get frame filename number 2 from pattern 'test.jpg' (either set updatefirst or use a pattern like %03d within the filename pattern)
+av_interleaved_write_frame(): Invalid argument
+[image2 @ 0378d560] Could not get frame filename number 2 from pattern 'test.jpg' (either set updatefirst or use a pattern like %03d within the filename pattern)
+av_interleaved_write_frame(): Invalid argument
+frame=    3 fps=0.0 q=1.6 Lsize=N/A time=00:00:00.12 bitrate=N/A dup=2 drop=0
+
+video:44kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+Conversion failed!
+
+D:\GoPro\ffmpeg\bin>ffmpeg -f mpegts -i "udp://10.5.5.9:8554?fifo_size=10000" test.jpg
