@@ -1,4 +1,6 @@
 <?php
+require_once ('config.php');
+
 /**
  * MysqliDb Class
  *
@@ -11,7 +13,7 @@
  * @license   http://opensource.org/licenses/gpl-3.0.html GNU Public License
  * @version   2.0
  **/
-class MysqliDb
+ class MysqliDb
 {
     /**
      * Static instance of self
