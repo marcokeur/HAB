@@ -1,5 +1,5 @@
 <?php
-/** The name of the database for WordPress */
+/** The name of the database for HAB */
 define('DB_NAME', 'hab');
 
 /** MySQL database username */
