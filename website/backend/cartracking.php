@@ -1,6 +1,6 @@
 <?php
 
-require_once ('../mysqldb.php');
+require_once ('../inc/mysqldb.php');
 $db = new MysqliDb (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
 $distance_diff = 0;
