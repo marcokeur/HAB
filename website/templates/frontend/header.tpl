@@ -4,8 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>Altran ISY - HAB</title>
 
-
-    
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">   
     <style>
@@ -22,8 +20,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     
-      <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
-    <script>
-    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    {block name="head_extra"}{/block}
     
   </head>
