@@ -11,9 +11,9 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/tracker">Tracker</a></li>
+	    {foreach $pages as $page}
+            <li {if $get.page eq $page@key}class="active"{/if}><a href="/{$page@key}">{$page|capitalize}</a></li>
+	    {/foreach}
           </ul>
         </div><!--/.nav-collapse -->
       </div>
