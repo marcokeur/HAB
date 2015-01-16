@@ -2,3 +2,4 @@
 {block name="container"}
 	This is the about page :-)
 {/block}
+{block name="javascript"}{/block}
