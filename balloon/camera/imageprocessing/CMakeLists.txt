@@ -8,7 +8,7 @@ IF(NOT DEFINED ENV{OpenCV_DIR})
     set(ENV{OpenCV_DIR} "/usr/local/opencv")
 ENDIF(NOT DEFINED ENV{OpenCV_DIR})
 
-MESSAGE("Using OpenCV from location: " ENV{OpenCV_DIR})
+MESSAGE("Using OpenCV from location: " $ENV{OpenCV_DIR})
 
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
