@@ -3,7 +3,7 @@ project(imageprocessing)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --specs=nosys.specs")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --specs=nosys.specs")
-set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_NAME Linux)
 
 # TODO Set the path where OpenCV can be found.
 IF(NOT DEFINED ENV{OpenCV_DIR})
