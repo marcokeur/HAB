@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.4)
 
 project(imageprocessing NONE)
-SET_TARGET_PROPERTIES(imageprocessing PROPERTIES LINKER_LANGUAGE CXX)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --specs=nosys.specs")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --specs=nosys.specs")
@@ -22,3 +21,4 @@ set(SOURCE_FILES src/main.cpp)
 add_executable(imageprocessing ${SOURCE_FILES})
 
 target_link_libraries( imageprocessing ${OpenCV_LIBS} )
+SET_TARGET_PROPERTIES(imageprocessing PROPERTIES LINKER_LANGUAGE CXX)
