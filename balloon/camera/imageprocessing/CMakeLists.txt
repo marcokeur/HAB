@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 2.8.4)
+
+set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
+
 project(imageprocessing NONE)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --specs=nosys.specs")
