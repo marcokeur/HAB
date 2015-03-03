@@ -1,0 +1,41 @@
+# Create a new output dir in the workspace.
+rm -rf output
+mkdir output
+
+#export PATH=/usr/local/gcc-arm-none-eabi/bin/:$PATH
+#export PLATFORM_FILE=$WORKSPACE/platforms/linux/arm-gnueabi.toolchain.cmake
+#export LOCAL_PLATFORM_FILE=$WORKSPACE/arm-gnueabi.toolchain.cmake
+
+# Fix the cmake script before building.
+#cp $PLATFORM_FILE $LOCAL_PLATFORM_FILE
+
+# http://www.vtk.org/Wiki/CMake_Cross_Compiling -> CMAKE_SYSTEM_NAME should be set to Generic i.s.o. Linux for Embedded
+#sed -i -e 's|set(CMAKE_SYSTEM_NAME Linux)|set(CMAKE_SYSTEM_NAME Generic)|g' $LOCAL_PLATFORM_FILE 
+
+# Cross compiling needs a spec file.
+#sed -i -e 's|set(CMAKE_CXX_FLAGS           ""|set(CMAKE_CXX_FLAGS           "--specs=nosys.specs"|g' $LOCAL_PLATFORM_FILE 
+#sed -i -e 's|set(CMAKE_C_FLAGS             ""|set(CMAKE_C_FLAGS             "--specs=nosys.specs"|g' $LOCAL_PLATFORM_FILE 
+ 
+# Fix wrong paths to the compiler.
+#sed -i -e 's|arm-linux-gnueabi\${FLOAT_ABI_SUFFIX}-gcc-\${GCC_COMPILER_VERSION}|arm-none-eabi\${FLOAT_ABI_SUFFIX}-gcc|g' $LOCAL_PLATFORM_FILE
+#sed -i -e 's|arm-linux-gnueabi\${FLOAT_ABI_SUFFIX}-g++-\${GCC_COMPILER_VERSION}|arm-none-eabi\${FLOAT_ABI_SUFFIX}-g++|g' $LOCAL_PLATFORM_FILE
+#sed -i -e 's|/usr/arm-linux-gnueabi\${FLOAT_ABI_SUFFIX}|/usr/local/gcc-arm-none-eabi\${FLOAT_ABI_SUFFIX}|g' $LOCAL_PLATFORM_FILE
+
+# Fix zlib problem by explicitly enabling build ZLIB. Doesn't work though.
+# sed -i -e 's|OCV_OPTION(BUILD_ZLIB               "Build zlib from source"             WIN32 OR APPLE )|OCV_OPTION(BUILD_ZLIB               "Build zlib from source"             WIN32 OR APPLE OR UNIX )|g' CMakeLists.txt
+
+# -D WITH_IPP=OFF
+# -D HAVE_PNG=TRUE
+# -DCMAKE_TOOLCHAIN_FILE="$PLATFORM_FILE"
+# -D CMAKE_BUILD_TYPE=Release
+# -D CMAKE_INSTALL_PREFIX="$WORKSPACE/output"
+# -DCMAKE_CXX_COMPILER=$CXX
+# -DCMAKE_CC_COMPILER=$CC
+
+export ZLIB_DIR="/var/lib/jenkins/jobs/High Altitude Balloon - ZLib/lastStable"
+
+/usr/bin/cmake -DWITH_IPP=OFF -DHAVE_PNG=TRUE -DSOFTFP=TRUE -DCMAKE_TOOLCHAIN_FILE="$LOCAL_PLATFORM_FILE" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$WORKSPACE/output" "$WORKSPACE"  
+
+
+make -j12
+
