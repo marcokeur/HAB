@@ -13,7 +13,7 @@ MESSAGE("Using OpenCV from location: " $ENV{OpenCV_DIR})
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-set(SOURCE_FILES src/main.cpp)
+set(SOURCE_FILES src/main/cpp/main.cpp)
 
 add_executable(imageprocessing ${SOURCE_FILES})
 
