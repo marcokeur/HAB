@@ -3,7 +3,6 @@ project(imageprocessing)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-# TODO Set the path where OpenCV can be found.
 IF(NOT DEFINED ENV{OpenCV_DIR})
     set(ENV{OpenCV_DIR} "/usr/local/opencv")
 ENDIF(NOT DEFINED ENV{OpenCV_DIR})
@@ -20,27 +19,27 @@ target_link_libraries( imageprocessing ${OpenCV_LIBS} )
 # TESTING
 ##########
 enable_testing()
-set(PROJECT_TEST_NAME ${PROJECT_NAME_STR}_test)
-file(GLOB TEST_SOURCE_FILES ${PROJECT_SOURCE_DIR}/test/*.cpp)
 
-add_executable(${PROJECT_TEST_NAME} ${TEST_SOURCE_FILES})
-add_dependencies(${PROJECT_TEST_NAME} googletest)
+IF(NOT DEFINED ENV{GOOGLETEST_DIR})
+    set(ENV{GOOGLETEST_DIR} "/usr/local/googletest/gtest-1.7.0")
+ENDIF(NOT DEFINED ENV{GOOGLETEST_DIR})
+MESSAGE("Using Google Test from location: " $ENV{GOOGLETEST_DIR} " Override by exporting GOOGLETEST_DIR")
 
-# TODO Set the path where GTEST_INCLUDE can be found.
-IF(NOT DEFINED ENV{GTEST_INCLUDE_DIR})
-    set(ENV{GTEST_INCLUDE_DIR} "/usr/local/include/gtest")
-ENDIF(NOT DEFINED ENV{GTEST_INCLUDE_DIR})
-MESSAGE("Using Google Test includes from location: " $ENV{GTEST_INCLUDE_DIR})
+add_subdirectory("${GOOGLETEST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/googletest")
 
-# TODO Set the path where GTEST_LIB can be found.
-IF(NOT DEFINED ENV{GTEST_LIBS_DIR})
-    set(ENV{GTEST_LIBS_DIR} "/usr/local/lib/gtest")
-ENDIF(NOT DEFINED ENV{GTEST_LIBS_DIR})
-MESSAGE("Using Google Test libs from location: " $ENV{GTEST_LIBS_DIR})
+enable_testing()
 
-# Include google test.
-include_directories( ${GTEST_INCLUDE_DIR} )
-target_link_libraries(${PROJECT_TEST_NAME} ${GTEST_LIBS_DIR}/gtest ${GTEST_LIBS_DIR}/gtest_main)
+# Include the gtest library. gtest_SOURCE_DIR is available due to
+# 'project(gtest)' above.
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-add_test(test_images ${PROJECT_TEST_NAME})
+##############
+# Unit Tests
+##############
+file(GLOB TEST_SOURCE_FILES src/test/cpp/*.cpp)
+add_executable(runUnitTests ${TEST_SOURCE_FILES})
 
+# Standard linking to gtest stuff.
+target_link_libraries(runUnitTests gtest gtest_main)
+
+add_test(NAME test_images COMMAND runUnitTests)
