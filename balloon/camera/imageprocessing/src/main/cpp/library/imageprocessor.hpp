@@ -9,14 +9,16 @@ namespace imageprocessor {
 			const bool send;
 			const std::string imageFile;
 			const std::string message;
-			Result(bool send, std:string imageFile, std::string message) : send{send}, imageFile{imageFile}, message{message} {}
+			Result(bool send, std::string imageFile, std::string message) : send{send}, imageFile{imageFile}, message{message} {}
+	};
 
 	class Input {
 		public:
-			const std:string imageFile;
-	}
+			const std::string imageFile;
+			Input(std::string imageFile) : imageFile{imageFile} {}
+	};
 
-	
+	const Result* const processImage(const Input* const input);
 }
 
 #endif /* IMAGEPROCESSOR_H */

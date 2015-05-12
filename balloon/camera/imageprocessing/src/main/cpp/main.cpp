@@ -1,10 +1,17 @@
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
 
+#include <imageprocessor.hpp>
+
 using namespace cv;
+using namespace imageprocessor;
 
 int main(int argc, char** argv )
 {
+    const Input* const input = new Input("/usr/local/jemoeder.jpg");
+    const Result* const result = imageprocessor::processImage(input);
+
+
     if ( argc != 2 )
     {
         printf("usage: DisplayImage.out <Image_Path>\n");

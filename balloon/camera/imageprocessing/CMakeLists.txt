@@ -9,7 +9,7 @@ ENDIF(NOT DEFINED ENV{OpenCV_DIR})
 MESSAGE("Using OpenCV from location: " $ENV{OpenCV_DIR} " (Override by exporting OpenCV_DIR)")
 
 find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${OpenCV_INCLUDE_DIRS} "src/main/cpp/library")
 
 file(GLOB MAIN_SOURCE_FILES "src/main/cpp/main.cpp")
 file(GLOB LIBRARY_SOURCE_FILES "src/main/cpp/library/*.cpp")
@@ -52,4 +52,3 @@ target_link_libraries(runUnitTests gtest gtest_main imageprocessing_library)
 
 add_test(NAME test_images COMMAND runUnitTests)
 
-add_subdirectory(src/main/cpp/library/include)
