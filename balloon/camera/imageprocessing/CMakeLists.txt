@@ -11,9 +11,13 @@ MESSAGE("Using OpenCV from location: " $ENV{OpenCV_DIR} " (Override by exporting
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-file(GLOB SOURCE_FILES "src/main/cpp/*.cpp")
-add_executable(imageprocessing ${SOURCE_FILES})
-target_link_libraries(imageprocessing ${OpenCV_LIBS})
+file(GLOB MAIN_SOURCE_FILES "src/main/cpp/main.cpp")
+file(GLOB LIBRARY_SOURCE_FILES "src/main/cpp/library/*.cpp")
+
+add_executable(imageprocessing ${MAIN_SOURCE_FILES})
+add_library(imageprocessing_library ${LIBRARY_SOURCE_FILES})
+
+target_link_libraries(imageprocessing ${OpenCV_LIBS} imageprocessing_library)
 
 ##########
 # TESTING
@@ -44,8 +48,8 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 ##############
 file(GLOB TEST_SOURCE_FILES "src/test/cpp/*.cpp")
 add_executable(runUnitTests ${TEST_SOURCE_FILES})
-target_link_libraries(runUnitTests gtest gtest_main)
+target_link_libraries(runUnitTests gtest gtest_main imageprocessing_library)
 
 add_test(NAME test_images COMMAND runUnitTests)
 
-
+add_subdirectory(src/main/cpp/library/include)
