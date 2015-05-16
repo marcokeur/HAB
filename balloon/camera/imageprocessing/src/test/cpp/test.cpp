@@ -1,8 +1,15 @@
 #include "gtest/gtest.h"
 
+#include "imageprocessor.hpp"
+
+using namespace imageprocessor;
+
 TEST(test_images, test_images)
 {
-	ASSERT_EQ(0, 1);
+	 const Input* const input = new Input("/usr/local/jemoeder.jpg");
+    const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
+
+	ASSERT_EQ(input->imageFile, result->imageFile);
 }
 
 

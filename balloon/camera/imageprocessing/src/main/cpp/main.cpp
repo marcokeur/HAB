@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <iostream>
+#include <memory> 
 #include <opencv2/opencv.hpp>
 
 #include <imageprocessor.hpp>
@@ -9,8 +11,9 @@ using namespace imageprocessor;
 int main(int argc, char** argv )
 {
     const Input* const input = new Input("/usr/local/jemoeder.jpg");
-    const Result* const result = imageprocessor::processImage(input);
-
+    const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
+	
+    std::cout << result->message << std::endl;
 
     if ( argc != 2 )
     {

@@ -14,10 +14,10 @@ include_directories(${OpenCV_INCLUDE_DIRS} "src/main/cpp/library")
 file(GLOB MAIN_SOURCE_FILES "src/main/cpp/main.cpp")
 file(GLOB LIBRARY_SOURCE_FILES "src/main/cpp/library/*.cpp")
 
-add_executable(imageprocessing ${MAIN_SOURCE_FILES})
-add_library(imageprocessing_library ${LIBRARY_SOURCE_FILES})
+add_executable(image_processing ${MAIN_SOURCE_FILES})
+add_library(imageprocessing ${LIBRARY_SOURCE_FILES})
 
-target_link_libraries(imageprocessing ${OpenCV_LIBS} imageprocessing_library)
+target_link_libraries(image_processing ${OpenCV_LIBS} imageprocessing)
 
 ##########
 # TESTING
@@ -48,7 +48,7 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 ##############
 file(GLOB TEST_SOURCE_FILES "src/test/cpp/*.cpp")
 add_executable(runUnitTests ${TEST_SOURCE_FILES})
-target_link_libraries(runUnitTests gtest gtest_main imageprocessing_library)
+target_link_libraries(runUnitTests gtest gtest_main imageprocessing)
 
 add_test(NAME test_images COMMAND runUnitTests)
 
