@@ -35,15 +35,6 @@ add_subdirectory("$ENV{GOOGLETEST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/googletest"
 # Includes through imported project
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-# Add googletest through external project
-#include(ExternalProject)
-#ExternalProject_Add(googletest
-#    SOURCE_DIR $ENV{GOOGLETEST_DIR}
-#    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/googletest"
-#    INSTALL_COMMAND ""
-#)
-#include_directories($ENV{GOOGLETEST_DIR}/include $ENV{GOOGLETEST_DIR})
-
 ##############
 # Unit Tests
 ##############
