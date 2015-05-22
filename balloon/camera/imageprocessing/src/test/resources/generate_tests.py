@@ -5,8 +5,9 @@ scenarios = open('scenarios.txt', 'r');
 lines = scenarios.readlines();
 scenarios.close();
 
+testHeader = "#include \"gtest/gtest.h\"\n\n#include \"imageprocessor.hpp\"\n\nusing namespace imageprocessor;\n"
 
-testText = "#include \"gtest/gtest.h\"\n\n#include \"imageprocessor.hpp\"\n\nusing namespace imageprocessor;\n\nTEST(test_images, {TEST_NAME}) {\n    const Input *const input = new Input(\"{TEST_FILE}\");\n    const std::unique_ptr<const Result> result = imageprocessor::processImage(input);\n    ASSERT_EQ({EXPECTED_RESULT}, result->send);\n}\n"
+testText = "\nTEST(test_images, {TEST_NAME}) {\n    const Input *const input = new Input(\"{TEST_FILE}\");\n    const std::unique_ptr<const Result> result = imageprocessor::processImage(input);\n    ASSERT_EQ({EXPECTED_RESULT}, result->send);\n}\n"
 
 directory = "../gen/cpp"
 if not exists(directory):
@@ -30,5 +31,6 @@ for line in lines:
             testCaseText = testCaseText.replace("{EXPECTED_RESULT}", "false")
 
         testFile = open(directory + "/test_" + imageNameWithoutExtension + ".cpp", 'w')
+        testFile.write(testHeader)
         testFile.write(testCaseText)
         testFile.close()
