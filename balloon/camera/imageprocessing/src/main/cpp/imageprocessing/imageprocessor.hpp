@@ -16,8 +16,13 @@ namespace imageprocessor {
         const std::string editedImageFile;
         const std::string message;
 
-        Result(bool send, std::string imageFile, std::string message) : send{send}, sourceImageFile{imageFile},
-                                                                        message{message} { }
+        Result(bool send, std::string sourceImageFile, std::string editedImageFile, std::string message)
+                : send{send},
+                  sourceImageFile{
+                          sourceImageFile},
+                  editedImageFile{
+                          editedImageFile},
+                  message{message} { }
 
 #ifdef TRACE_LOGGING
 			~Result() {
