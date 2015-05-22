@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <iostream>
-#include <memory> 
 #include <opencv2/opencv.hpp>
 
 #include <imageprocessor.hpp>
+#include <stdio.h>
+#include <iostream>
+#include <memory>
 
 using namespace cv;
 using namespace imageprocessor;

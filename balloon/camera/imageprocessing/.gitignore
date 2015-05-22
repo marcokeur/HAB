@@ -11,3 +11,5 @@ imageprocessing
 *.hpp~
 .gitignore~
 imageprocessing.kdev4
+src/test/gen
+src/test/resources/hab-image-processing
