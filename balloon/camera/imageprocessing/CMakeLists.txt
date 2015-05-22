@@ -9,13 +9,13 @@ ENDIF(NOT DEFINED ENV{OpenCV_DIR})
 MESSAGE("Using OpenCV from location: " $ENV{OpenCV_DIR} " (Override by exporting OpenCV_DIR)")
 
 find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS} "src/main/cpp/library")
+include_directories(${OpenCV_INCLUDE_DIRS} "src/main/cpp/imageprocessing")
 
 file(GLOB MAIN_SOURCE_FILES "src/main/cpp/main.cpp")
-file(GLOB LIBRARY_SOURCE_FILES "src/main/cpp/library/*.cpp")
+file(GLOB IMAGE_PROCESSINGLIBRARY_SOURCE_FILES "src/main/cpp/imageprocessing/*.cpp")
 
 add_executable(image_processing ${MAIN_SOURCE_FILES})
-add_library(imageprocessing ${LIBRARY_SOURCE_FILES})
+add_library(imageprocessing ${IMAGE_PROCESSINGLIBRARY_SOURCE_FILES})
 
 target_link_libraries(imageprocessing ${OpenCV_LIBS})
 target_link_libraries(image_processing imageprocessing)
