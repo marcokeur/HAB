@@ -6,9 +6,8 @@ CMakeFiles
 Makefile
 CMakeCache.txt
 cmake_install.cmake
-imageprocessing
 *.cpp~
 *.hpp~
 .gitignore~
 imageprocessing.kdev4
-src/test/gen
+gen
