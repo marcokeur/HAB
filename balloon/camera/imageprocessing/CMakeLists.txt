@@ -9,15 +9,16 @@ ENDIF(NOT DEFINED ENV{OpenCV_DIR})
 MESSAGE("Using OpenCV from location: " $ENV{OpenCV_DIR} " (Override by exporting OpenCV_DIR)")
 
 find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS} "src/main/cpp/library")
+include_directories(${OpenCV_INCLUDE_DIRS} "src/main/cpp/imageprocessing")
 
 file(GLOB MAIN_SOURCE_FILES "src/main/cpp/main.cpp")
-file(GLOB LIBRARY_SOURCE_FILES "src/main/cpp/library/*.cpp")
+file(GLOB IMAGE_PROCESSINGLIBRARY_SOURCE_FILES "src/main/cpp/imageprocessing/*.cpp")
+
+add_library(imageprocessing ${IMAGE_PROCESSINGLIBRARY_SOURCE_FILES})
+target_link_libraries(imageprocessing ${OpenCV_LIBS})
 
 add_executable(image_processing ${MAIN_SOURCE_FILES})
-add_library(imageprocessing ${LIBRARY_SOURCE_FILES})
-
-target_link_libraries(image_processing ${OpenCV_LIBS} imageprocessing)
+target_link_libraries(image_processing imageprocessing)
 
 ##########
 # TESTING
@@ -34,21 +35,15 @@ add_subdirectory("$ENV{GOOGLETEST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/googletest"
 # Includes through imported project
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-# Add googletest through external project
-#include(ExternalProject)
-#ExternalProject_Add(googletest
-#    SOURCE_DIR $ENV{GOOGLETEST_DIR}
-#    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/googletest"
-#    INSTALL_COMMAND ""
-#)
-#include_directories($ENV{GOOGLETEST_DIR}/include $ENV{GOOGLETEST_DIR})
-
 ##############
 # Unit Tests
 ##############
 file(GLOB TEST_SOURCE_FILES "src/test/cpp/*.cpp")
-add_executable(runUnitTests ${TEST_SOURCE_FILES})
+file(GLOB GENERATED_TEST_SOURCE_FILES "src/test/gen/cpp/*.cpp")
+
+add_executable(runUnitTests ${TEST_SOURCE_FILES} ${GENERATED_TEST_SOURCE_FILES})
 target_link_libraries(runUnitTests gtest gtest_main imageprocessing)
 
 add_test(NAME test_images COMMAND runUnitTests)
+add_test(NAME test_file COMMAND runUnitTests)
 

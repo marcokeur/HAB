@@ -11,6 +11,6 @@ listedFiles.sort();
 files = [f for f in listedFiles if (isfile(join(myPath,f)) and f.endswith('.png'))];
 
 for file in files:
-	scenarios.write(file + '\t0' +linesep);
+	scenarios.write(myPath + "/" + file + '\t0' +linesep);
 
 scenarios.close();
