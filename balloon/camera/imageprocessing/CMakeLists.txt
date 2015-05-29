@@ -9,16 +9,20 @@ ENDIF(NOT DEFINED ENV{OpenCV_DIR})
 MESSAGE("Using OpenCV from location: " $ENV{OpenCV_DIR} " (Override by exporting OpenCV_DIR)")
 
 find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS} "src/main/cpp/imageprocessing")
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+file(GLOB LOGGING_SOURCE_FILES "src/main/cpp/logging/*.cpp")
+add_library(logging ${LOGGING_SOURCE_FILES})
+include_directories("src/main/cpp/logging")
+
+file(GLOB IMAGE_PROCESSINGLIBRARY_SOURCE_FILES "src/main/cpp/imageprocessing/*.cpp")
+add_library(imageprocessing ${IMAGE_PROCESSINGLIBRARY_SOURCE_FILES})
+target_link_libraries(imageprocessing ${OpenCV_LIBS} logging)
+include_directories("src/main/cpp/imageprocessing")
 
 file(GLOB MAIN_SOURCE_FILES "src/main/cpp/main.cpp")
-file(GLOB IMAGE_PROCESSINGLIBRARY_SOURCE_FILES "src/main/cpp/imageprocessing/*.cpp")
-
-add_library(imageprocessing ${IMAGE_PROCESSINGLIBRARY_SOURCE_FILES})
-target_link_libraries(imageprocessing ${OpenCV_LIBS})
-
 add_executable(image_processing ${MAIN_SOURCE_FILES})
-target_link_libraries(image_processing imageprocessing)
+target_link_libraries(image_processing imageprocessing logging)
 
 ##########
 # TESTING
@@ -44,6 +48,9 @@ file(GLOB GENERATED_TEST_SOURCE_FILES "src/test/gen/cpp/*.cpp")
 add_executable(runUnitTests ${TEST_SOURCE_FILES} ${GENERATED_TEST_SOURCE_FILES})
 target_link_libraries(runUnitTests gtest gtest_main imageprocessing)
 
+SET_TARGET_PROPERTIES(runUnitTests PROPERTIES COMPILE_FLAGS -DTRACE_LOGGING)
+
 add_test(NAME test_images COMMAND runUnitTests)
 add_test(NAME test_file COMMAND runUnitTests)
+
 

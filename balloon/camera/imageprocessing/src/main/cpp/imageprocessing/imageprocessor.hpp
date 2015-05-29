@@ -5,7 +5,9 @@
 #include <memory>
 
 #ifdef TRACE_LOGGING // TODO fix logging and debug builds.
-#include <iostream>
+#include <logging.hpp>
+
+static const logging::Logger * const logger = logging::getLogger("imageprocessing");
 #endif /* TRACE_LOGGING */
 
 namespace imageprocessor {
@@ -26,7 +28,7 @@ namespace imageprocessor {
 
 #ifdef TRACE_LOGGING
 			~Result() {
-				std::cout << "Destroying Result" <<std::endl;
+				logger->trace("Destroying result");
 			}
 #endif /* TRACE_LOGGING */
     };

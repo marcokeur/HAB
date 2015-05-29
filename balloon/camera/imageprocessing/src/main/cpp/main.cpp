@@ -1,18 +1,20 @@
 #include <opencv2/opencv.hpp>
 
 #include <imageprocessor.hpp>
-#include <stdio.h>
-#include <iostream>
-#include <memory>
+#include <logging.hpp>
 
 using namespace cv;
 using namespace imageprocessor;
+using namespace logging;
+
+const Logger * const logger = getLogger("main");
+
 
 int main(int argc, char **argv) {
     const Input *const input = new Input("/usr/local/jemoeder.jpg");
     const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
 
-    std::cout << result->message << std::endl;
+    logger->info(result->message);
 
     if (argc != 2) {
         printf("usage: DisplayImage.out <Image_Path>\n");

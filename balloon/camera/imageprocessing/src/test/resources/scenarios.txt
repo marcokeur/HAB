@@ -6,7 +6,7 @@ hab-00501.png	1
 hab-00601.png	1
 hab-00701.png	1
 hab-00801.png	1
-hab-00901.png	0
+hab-00901.png	1
 hab-01001.png	1
 hab-01101.png	1
 hab-01201.png	1
