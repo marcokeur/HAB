@@ -1,23 +1,23 @@
 import Adafruit_BBIO.UART as UART
 import serial
 
-'''Helper for NTX2 Transmitter connected on UART5 of the beaglebone'''
 class NTX2_Transmitter:
+    '''Helper for NTX2 Transmitter connected on UART5 of the beaglebone'''
 
-    '''Constructor'''
     def __init__(self, uart, port):
+        '''Constructor'''
         UART.setup(uart)
         self.serial = serial.Serial(port=port, baudrate=300, stopbits=2)
         
-    '''Open the serial connection to the NTX2 transmitter'''
     def open(self):
+        '''Open the serial connection to the NTX2 transmitter'''
         self.serial.open()
 
-    '''Close the serial connection to the NTX2 transmitter'''
     def close(self):
+        '''Close the serial connection to the NTX2 transmitter'''
         self.serial.close()
 
-    '''Transmit text with the NTX2 transmitter'''
     def transmit(self, text):
+         '''Transmit text with the NTX2 transmitter'''
         if self.serial.isOpen():
             self.serial.write(text)
