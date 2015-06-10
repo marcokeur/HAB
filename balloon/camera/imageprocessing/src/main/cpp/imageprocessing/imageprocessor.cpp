@@ -60,12 +60,12 @@ namespace imageprocessor {
         const bool sendForHistogram = isHistogramClean(image);
         greyScaleHistogram(&greyScale);
 
-        const bool sendForSharpnessColor = isImageSharpEnough(image);
+//        const bool sendForSharpnessColor = isImageSharpEnough(image);
         const bool sendForSharpnessGreyScale = isImageSharpEnough(greyScale);
 
         resultBuilder.send =
                     sendForHistogram
-                    && sendForSharpnessColor
+//                    && sendForSharpnessColor
                     && sendForSharpnessGreyScale;
 
         return resultBuilder;
@@ -81,7 +81,9 @@ namespace imageprocessor {
         magnitude(sobelx, sobely, sobelx);
         double sharpness = sum(sobelx)[0];
 
-        std::cout << "Sharpness for image: " << sharpness << std::endl;
+        std::stringstream ss;
+        ss << "Sharpness for image: " << sharpness;
+        logger->trace(ss.str());
         return sharpness > (1.5 * 1000000);
     }
 
@@ -121,8 +123,11 @@ namespace imageprocessor {
         calcHist(image, 1, 0, Mat(), histogram, 1, &numberOfBins, &binRange, uniform, accumulate);
 
         int mean = calculateMeanFrom1DimensionalHistogram(numberOfBins, histogram);
+        float std = calculateStandardDeviationFrom1DimensionalHistogram(numberOfBins, histogram, mean);
 
-
+        std::stringstream ss;
+        ss << "Image mean: " << mean << " and std: " << std;
+        logger->trace(ss.str());
     }
 
     const bool isHistogramClean(const Mat &image) {
@@ -151,7 +156,9 @@ namespace imageprocessor {
         const int meanGreen = calculateMeanFrom1DimensionalHistogram(histSize, g_hist);
         const int meanBlue = calculateMeanFrom1DimensionalHistogram(histSize, b_hist);
 
-        std::cout << "Mean RGB values: " << meanRed << ", " << meanGreen << ", " << meanBlue << std::endl;
+        std::stringstream ss;
+        ss << "Mean RGB values: " << meanRed << ", " << meanGreen << ", " << meanBlue << std::endl;
+        logger->trace(ss.str());
 
         // TODO: Analyze histogram.
         return true;
