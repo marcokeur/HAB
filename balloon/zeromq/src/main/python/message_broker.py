@@ -3,6 +3,7 @@ __author__ = 'timoveldt'
 
 import zmq
 
+
 def init():
     context = zmq.Context()
     xpub = context.socket(zmq.XPUB)
@@ -16,17 +17,19 @@ def init():
 
     return context, xpub, xsub, poller
 
+
 def main():
     """ main method """
     try:
         mainLoop()
     except KeyboardInterrupt as e:
-        print "Done, closing down broker!"
+        print "Done, closing down broker!", \
+            "No more messages will be routed and the balloon can be considered dead if you see this."
 
 
 def mainLoop():
     while True:
-        print "Starting up..."
+        print "###########################\n# (Re)starting...\n###########################"
         context, xpub, xsub, poller = init()
         print "Initialized"
         routeMessagesLoop(context, poller, xpub, xsub)
@@ -57,6 +60,7 @@ def routeMessagesLoop(context, poller, xpub, xsub):
             except:
                 print "Exception closing context, ignoring"
             break
+
 
 if __name__ == "__main__":
     main()
