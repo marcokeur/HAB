@@ -3,6 +3,7 @@ __author__ = 'timoveldt'
 import zmq
 import time
 
+
 def main():
     context = zmq.Context()
 
@@ -20,7 +21,6 @@ def main():
             else:
                 print "Breaking loop, got nothing..."
                 break
-
 
 
 if __name__ == "__main__":

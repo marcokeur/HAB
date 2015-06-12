@@ -3,13 +3,16 @@ __author__ = 'timoveldt'
 
 import zmq
 
+PUBLISHER_PORT = 5559
+SUBSCRIBER_PORT = 5560
+
 
 def init():
     context = zmq.Context()
     xpub = context.socket(zmq.XPUB)
-    xpub.bind("tcp://*:5559")
+    xpub.bind("tcp://*:" + str(PUBLISHER_PORT))
     xsub = context.socket(zmq.XSUB)
-    xsub.bind("tcp://*:5560")
+    xsub.bind("tcp://*:" + str(SUBSCRIBER_PORT))
 
     poller = zmq.Poller()
     poller.register(xpub, zmq.POLLIN)
