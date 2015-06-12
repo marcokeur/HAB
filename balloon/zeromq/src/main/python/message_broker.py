@@ -3,9 +3,7 @@ __author__ = 'timoveldt'
 
 import zmq
 
-def main():
-    """ main method """
-
+def init():
     context = zmq.Context()
     xpub = context.socket(zmq.XPUB)
     xpub.bind("tcp://*:5559")
@@ -15,21 +13,50 @@ def main():
     poller = zmq.Poller()
     poller.register(xpub, zmq.POLLIN)
     poller.register(xsub, zmq.POLLIN)
-    while True:
-        events = dict(poller.poll(1000))
-        if xpub in events:
-            message = xpub.recv_multipart()
-            print "[BROKER] subscription message: %r" % message[0]
-            xsub.send_multipart(message)
-        if xsub in events:
-            message = xsub.recv_multipart()
-            # print "publishing message: %r" % message
-            xpub.send_multipart(message)
 
-    # We never get here…
-    xpub.close()
-    xsub.close()
-    context.term()
+    return context, xpub, xsub, poller
+
+def main():
+    """ main method """
+    try:
+        mainLoop()
+    except KeyboardInterrupt as e:
+        print "Done, closing down broker!"
+
+
+def mainLoop():
+    while True:
+        print "Starting up..."
+        context, xpub, xsub, poller = init()
+        print "Initialized"
+        routeMessagesLoop(context, poller, xpub, xsub)
+
+
+def routeMessagesLoop(context, poller, xpub, xsub):
+    while True:
+        try:
+            events = dict(poller.poll(1000))
+            if xpub in events:
+                message = xpub.recv_multipart()
+                print "[BROKER] subscription message: %r" % message[0]
+                xsub.send_multipart(message)
+            if xsub in events:
+                message = xsub.recv_multipart()
+                xpub.send_multipart(message)
+        except KeyboardInterrupt as e:
+            raise e
+        except Exception as e:
+            print "Got an exception, closing and restarting.", e
+            try:
+                xpub.close()
+                xsub.close()
+            except:
+                print "Exception closing sockets, ignoring"
+            try:
+                context.term()
+            except:
+                print "Exception closing context, ignoring"
+            break
 
 if __name__ == "__main__":
     main()
