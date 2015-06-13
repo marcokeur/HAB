@@ -4,7 +4,7 @@
 
 #include "gtest/gtest.h"
 
-#include "imageprocessor.hpp"
+#include "imageprocessing/imageprocessor.hpp"
 
 using namespace imageprocessor;
 

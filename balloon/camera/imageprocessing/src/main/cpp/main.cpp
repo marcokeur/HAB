@@ -11,6 +11,8 @@ const Logger * const logger = getLogger("main");
 
 
 int main(int argc, char **argv) {
+    logger->info("Started main...");
+    logger->trace("Je MOEDER was here!");
     const Input *const input = new Input("/usr/local/jemoeder.jpg");
     const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
 
