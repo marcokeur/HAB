@@ -21,13 +21,13 @@ namespace imageprocessor {
         }
     };
 
-    const int calculateMeanFrom1DimensionalHistogram(const int &numberOfBins, const Mat &histogram);
+    const int calculateMeanFrom1DimensionalHistogram(const Mat &histogram);
 
     const bool isHistogramClean(const Mat &image);
 
     const bool isImageSharpEnough(const Mat &image);
 
-    void greyScaleHistogram(const Mat *image);
+    const bool isGreyScaleHistogramClean(const Mat *image);
 
     ResultBuilder &analyzeImage(ResultBuilder &resultBuilder, const Mat &image);
 
@@ -57,13 +57,14 @@ namespace imageprocessor {
         cvtColor(image, greyScale, CV_RGB2GRAY);
 
         const bool sendForHistogram = isHistogramClean(image);
-        greyScaleHistogram(&greyScale);
+        const bool sendForGreyScaleHistogram = isGreyScaleHistogramClean(&greyScale);
 
 //        const bool sendForSharpnessColor = isImageSharpEnough(image);
         const bool sendForSharpnessGreyScale = isImageSharpEnough(greyScale);
 
         resultBuilder.send =
                     sendForHistogram
+                    && sendForGreyScaleHistogram
 //                    && sendForSharpnessColor
                     && sendForSharpnessGreyScale;
 
@@ -86,10 +87,10 @@ namespace imageprocessor {
         return sharpness > (1.5 * 1000000);
     }
 
-    const int calculateMeanFrom1DimensionalHistogram(const int &numberOfBins, const Mat &histogram) {
+    const int calculateMeanFrom1DimensionalHistogram(const Mat &histogram) {
         int sum = 0;
         int totalPixelCount = 0;
-        for (int i = 0; i < numberOfBins; i++) {
+        for (int i = 0; i < histogram.rows; i++) {
             int pixelCount = cvRound(histogram.at<float>(i));
             sum += (i * pixelCount);
             totalPixelCount += pixelCount;
@@ -98,21 +99,22 @@ namespace imageprocessor {
         return sum / totalPixelCount;
     }
 
-    const double calculateStandardDeviationFrom1DimensionalHistogram(const int &numberOfBins, const Mat &histogram, const int &mean) {
+    const double calculateStandardDeviationFrom1DimensionalHistogram(const Mat &histogram, const int &mean) {
         int sum = 0;
-
+        int totalPixelCount = 0;
         for (int i = 0; i < histogram.rows; i++) {
             int pixelCount = cvRound(histogram.at<float>(i));
             int diff = i - mean;
             sum += pixelCount * (diff * diff);
+            totalPixelCount += pixelCount;
         }
 
-        return sqrt(sum / numberOfBins);
+        return sqrt(sum / totalPixelCount);
     }
 
-    void greyScaleHistogram(const Mat *image) {
-        int numberOfBins = 256;
-        float range[] = {0, 256};
+    const bool isGreyScaleHistogramClean(const Mat *image) {
+        int numberOfBins = 512;
+        float range[] = {0, 512};
         const float *binRange = {range};
 
         bool uniform = true;
@@ -121,12 +123,15 @@ namespace imageprocessor {
         Mat histogram;
         calcHist(image, 1, 0, Mat(), histogram, 1, &numberOfBins, &binRange, uniform, accumulate);
 
-        int mean = calculateMeanFrom1DimensionalHistogram(numberOfBins, histogram);
-        double std = calculateStandardDeviationFrom1DimensionalHistogram(numberOfBins, histogram, mean);
+        int mean = calculateMeanFrom1DimensionalHistogram(histogram);
+        double std = calculateStandardDeviationFrom1DimensionalHistogram(histogram, mean);
 
         std::stringstream ss;
         ss << "Image mean: " << mean << " and std: " << std;
         logger->trace(ss.str());
+
+
+        return (mean >= 100) && (std > 30);
     }
 
     const bool isHistogramClean(const Mat &image) {
@@ -151,9 +156,9 @@ namespace imageprocessor {
         calcHist(&bgr_planes[1], 1, 0, Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate);
         calcHist(&bgr_planes[2], 1, 0, Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate);
 
-        const int meanRed = calculateMeanFrom1DimensionalHistogram(histSize, r_hist);
-        const int meanGreen = calculateMeanFrom1DimensionalHistogram(histSize, g_hist);
-        const int meanBlue = calculateMeanFrom1DimensionalHistogram(histSize, b_hist);
+        const int meanRed = calculateMeanFrom1DimensionalHistogram(r_hist);
+        const int meanGreen = calculateMeanFrom1DimensionalHistogram(g_hist);
+        const int meanBlue = calculateMeanFrom1DimensionalHistogram(b_hist);
 
         std::stringstream ss;
         ss << "Mean RGB values: " << meanRed << ", " << meanGreen << ", " << meanBlue;
