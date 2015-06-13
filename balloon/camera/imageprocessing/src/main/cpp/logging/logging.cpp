@@ -13,6 +13,16 @@
 
 #include <mutex>
 
+#ifndef LOGGER_LEVEL
+#define LOGGER_LEVEL 0
+#endif /* LOGGER_LEVEL */
+
+#define TRACE 5
+#define DEBUG 4
+#define INFO 3
+#define WARN 2
+#define ERROR 1
+
 namespace logging {
     std::mutex loggingMutex;
 
@@ -50,10 +60,10 @@ namespace logging {
 
     const Logger *const getLogger(const std::string &source) {
         static std::vector<std::unique_ptr<const LoggerImpl>> loggers;
-        static std::map<std::string, const LoggerImpl*> loggerMap;
+        static std::map<std::string, const LoggerImpl *> loggerMap;
 
         const LoggerImpl *instance = loggerMap[source];
-        if(instance == 0) {
+        if (instance == 0) {
             instance = new LoggerImpl(source);
             loggerMap[source] = instance;
             std::unique_ptr<const LoggerImpl> logger(instance);
@@ -77,23 +87,33 @@ namespace logging {
     }
 
     void LoggerImpl::trace(const std::string &format) const {
+#if LOGGER_LEVEL>=TRACE
         log("TRACE", format);
+#endif /* LOGGER_LEVEL */
     }
 
     void LoggerImpl::debug(const std::string &format) const {
+#if LOGGER_LEVEL>=DEBUG
         log("DEBUG", format);
+#endif /* LOGGER_LEVEL */
     }
 
     void LoggerImpl::info(const std::string &format) const {
+#if LOGGER_LEVEL>=INFO
         log("INFO", format);
+#endif /* LOGGER_LEVEL */
     }
 
     void LoggerImpl::warn(const std::string &format) const {
+#if LOGGER_LEVEL>=WARN
         log("WARN", format);
+#endif /* LOGGER_LEVEL */
     }
 
     void LoggerImpl::error(const std::string &format) const {
+#if LOGGER_LEVEL>=ERROR
         log("ERROR", format);
+#endif /* LOGGER_LEVEL */
     }
 
     void LoggerImpl::log(const std::string &level, const std::string &format) const {
