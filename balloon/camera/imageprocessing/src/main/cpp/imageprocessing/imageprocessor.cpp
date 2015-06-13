@@ -99,16 +99,16 @@ namespace imageprocessor {
         return sum / totalPixelCount;
     }
 
-    const float calculateStandardDeviationFrom1DimensionalHistogram(const int &numberOfBins, const Mat &histogram, const int &mean) {
+    const double calculateStandardDeviationFrom1DimensionalHistogram(const int &numberOfBins, const Mat &histogram, const int &mean) {
         int sum = 0;
 
         for (int i = 0; i < histogram.rows; i++) {
             int pixelCount = cvRound(histogram.at<float>(i));
-            int diff = pixelCount - mean;
-            sum += diff * diff;
+            int diff = i - mean;
+            sum += pixelCount * (diff * diff);
         }
 
-        return sum / numberOfBins;
+        return sqrt(sum / numberOfBins);
     }
 
     void greyScaleHistogram(const Mat *image) {
@@ -123,7 +123,7 @@ namespace imageprocessor {
         calcHist(image, 1, 0, Mat(), histogram, 1, &numberOfBins, &binRange, uniform, accumulate);
 
         int mean = calculateMeanFrom1DimensionalHistogram(numberOfBins, histogram);
-        float std = calculateStandardDeviationFrom1DimensionalHistogram(numberOfBins, histogram, mean);
+        double std = calculateStandardDeviationFrom1DimensionalHistogram(numberOfBins, histogram, mean);
 
         std::stringstream ss;
         ss << "Image mean: " << mean << " and std: " << std;
@@ -157,7 +157,7 @@ namespace imageprocessor {
         const int meanBlue = calculateMeanFrom1DimensionalHistogram(histSize, b_hist);
 
         std::stringstream ss;
-        ss << "Mean RGB values: " << meanRed << ", " << meanGreen << ", " << meanBlue << std::endl;
+        ss << "Mean RGB values: " << meanRed << ", " << meanGreen << ", " << meanBlue;
         logger->trace(ss.str());
 
         // TODO: Analyze histogram.
