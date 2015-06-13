@@ -17,20 +17,15 @@
 #define LOGGER_LEVEL 0
 #endif /* LOGGER_LEVEL */
 
-#define TRACE 5
-#define DEBUG 4
-#define INFO 3
-#define WARN 2
-#define ERROR 1
-
 namespace logging {
     std::mutex loggingMutex;
 
     class LoggerImpl : Logger {
     public:
         const std::string source;
+        const LoggingLevel level;
 
-        LoggerImpl(std::string source) : source(source) { }
+        LoggerImpl(const std::string source, const LoggingLevel level) : source(source), level(level){ }
 
         ~LoggerImpl() {
             this->trace("Closed logger.");
@@ -58,13 +53,13 @@ namespace logging {
         }
     };
 
-    const Logger *const getLogger(const std::string &source) {
+    const Logger *const getLogger(const std::string &source, const LoggingLevel &level) {
         static std::vector<std::unique_ptr<const LoggerImpl>> loggers;
         static std::map<std::string, const LoggerImpl *> loggerMap;
 
         const LoggerImpl *instance = loggerMap[source];
         if (instance == 0) {
-            instance = new LoggerImpl(source);
+            instance = new LoggerImpl(source, level);
             loggerMap[source] = instance;
             std::unique_ptr<const LoggerImpl> logger(instance);
             loggers.push_back(std::move(logger));
@@ -87,33 +82,33 @@ namespace logging {
     }
 
     void LoggerImpl::trace(const std::string &format) const {
-#if LOGGER_LEVEL>=TRACE
-        log("TRACE", format);
-#endif /* LOGGER_LEVEL */
+        if (level >= TRACE) {
+            log("TRACE", format);
+        }
     }
 
     void LoggerImpl::debug(const std::string &format) const {
-#if LOGGER_LEVEL>=DEBUG
-        log("DEBUG", format);
-#endif /* LOGGER_LEVEL */
+        if (level >= DEBUG) {
+            log("DEBUG", format);
+        }
     }
 
     void LoggerImpl::info(const std::string &format) const {
-#if LOGGER_LEVEL>=INFO
-        log("INFO", format);
-#endif /* LOGGER_LEVEL */
+        if (level >= INFO) {
+            log("INFO", format);
+        }
     }
 
     void LoggerImpl::warn(const std::string &format) const {
-#if LOGGER_LEVEL>=WARN
-        log("WARN", format);
-#endif /* LOGGER_LEVEL */
+        if (level >= WARN) {
+            log("WARN", format);
+        }
     }
 
     void LoggerImpl::error(const std::string &format) const {
-#if LOGGER_LEVEL>=ERROR
-        log("ERROR", format);
-#endif /* LOGGER_LEVEL */
+        if (level >= ERROR) {
+            log("ERROR", format);
+        }
     }
 
     void LoggerImpl::log(const std::string &level, const std::string &format) const {
@@ -123,7 +118,11 @@ namespace logging {
 #pragma clang diagnostic pop
         std::stringstream stream;
         streamTime(stream);
-        stream << source << " " << level << " - " << format << std::endl;
+        stream <<
+                std::setw(20) << std::setfill(' ') << source <<
+                " " <<
+                std::setw(5) << std::setfill(' ') << level <<
+                " - " << format << std::endl;
 
         std::cout << stream.str();
     }

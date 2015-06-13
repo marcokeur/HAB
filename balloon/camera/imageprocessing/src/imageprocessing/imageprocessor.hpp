@@ -4,13 +4,9 @@
 #include <string>
 #include <memory>
 
-#ifdef TRACE_LOGGING // TODO fix logging and debug builds.
-#include <logging.hpp>
-
-static const logging::Logger * const logger = logging::getLogger("imageprocessing");
-#endif /* TRACE_LOGGING */
-
 namespace imageprocessor {
+    const std::string IMAGE_PROCESSING_LOGGING_SOURCE = "imageprocessing";
+
     class Result {
     public:
         const bool send;
@@ -26,11 +22,7 @@ namespace imageprocessor {
                           editedImageFile},
                   message{message} { }
 
-#ifdef TRACE_LOGGING
-			~Result() {
-				logger->trace("Destroying result");
-			}
-#endif /* TRACE_LOGGING */
+        ~Result();
     };
 
     class Input {
@@ -40,7 +32,6 @@ namespace imageprocessor {
         Input(std::string imageFile) : imageFile{imageFile} { }
     };
 
-    //const Result* const processImage(const Input* const input);
     std::unique_ptr<const Result> processImage(const Input *const input);
 }
 

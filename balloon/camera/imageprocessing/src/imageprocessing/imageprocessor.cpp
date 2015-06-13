@@ -1,10 +1,11 @@
 #include "imageprocessor.hpp"
-
-#include <logging.hpp>
+#include "../logging/logging.hpp"
 
 #include <opencv2/opencv.hpp>
 
 namespace imageprocessor {
+    // Gets a quiet logger unless another cpp files specifies it first.
+    const logging::Logger *const logger = logging::getLogger(IMAGE_PROCESSING_LOGGING_SOURCE);
 
     using namespace cv;
 
@@ -29,8 +30,6 @@ namespace imageprocessor {
     void greyScaleHistogram(const Mat *image);
 
     ResultBuilder &analyzeImage(ResultBuilder &resultBuilder, const Mat &image);
-
-    static const logging::Logger * const logger = logging::getLogger("imageprocessing");
 
     std::unique_ptr<const Result> processImage(const Input *const input) {
         logger->info("Processing " + input->imageFile);
@@ -162,6 +161,10 @@ namespace imageprocessor {
 
         // TODO: Analyze histogram.
         return true;
+    }
+
+    Result::~Result() {
+        logger->trace("Destroying result");
     }
 }
 

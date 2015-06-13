@@ -3,8 +3,6 @@ project(unit_tests)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-add_definitions(-DLOGGER_LEVEL=TRACE)
-
 enable_testing()
 
 # Google test
@@ -14,17 +12,14 @@ ENDIF(NOT DEFINED ENV{GOOGLETEST_DIR})
 MESSAGE("Using Google Test from location: " $ENV{GOOGLETEST_DIR} " (Override by exporting GOOGLETEST_DIR)")
 
 # Add googletest through subdirectory.
-add_subdirectory("$ENV{GOOGLETEST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/googletest")
+add_subdirectory("$ENV{GOOGLETEST_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/test/googletest")
 # Includes through imported project
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-
-# Include main directories.
-include_directories(${imageprocessing_project_SOURCE_DIR}/src/main/cpp)
 
 ##############
 # Unit Tests
 ##############
-file(GLOB TEST_SOURCE_FILES "cpp/*.cpp")
+file(GLOB TEST_SOURCE_FILES "*.cpp")
 file(GLOB GENERATED_TEST_SOURCE_FILES "gen/cpp/*.cpp")
 
 add_executable(runUnitTests ${TEST_SOURCE_FILES} ${GENERATED_TEST_SOURCE_FILES})
