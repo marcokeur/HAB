@@ -20,6 +20,11 @@ find_library(ZMQ_LIBRARY
 message("ZeroMQ libs from ${ZMQ_LIBRARY}")
 
 include_directories(${ZMQ_INCLUDE_DIR})
-file(GLOB MAIN_SOURCE_FILES "main.cpp")
-add_executable(zeromq_tester ${MAIN_SOURCE_FILES})
-target_link_libraries(zeromq_tester ${ZMQ_LIBRARY})
+
+file(GLOB SUBSCRIBER_SOURCE_FILES "subscriber.cpp")
+add_executable(zeromq_subscriber ${SUBSCRIBER_SOURCE_FILES})
+target_link_libraries(zeromq_subscriber ${ZMQ_LIBRARY})
+
+file(GLOB PUBLISHER_SOURCE_FILES "publisher.cpp")
+add_executable(zeromq_publisher ${PUBLISHER_SOURCE_FILES} publisher.h publisher.cpp)
+target_link_libraries(zeromq_publisher ${ZMQ_LIBRARY})

@@ -13,11 +13,10 @@ int main(int argc, char *argv[]) {
 
     //  First, connect our subscriber socket
     zmq::socket_t subscriber(context, ZMQ_SUB);
-    char topics[2];
-    topics[0] = 'A';
-    topics[1] = 'D';
     subscriber.setsockopt(ZMQ_SUBSCRIBE, "A", 1);
     subscriber.setsockopt(ZMQ_SUBSCRIBE, "D", 1);
+    std::string topic = "CPP_TOPIC";
+    subscriber.setsockopt(ZMQ_SUBSCRIBE, topic.data(), topic.size());
     subscriber.connect("tcp://localhost:5559");
 
     while (1) {
