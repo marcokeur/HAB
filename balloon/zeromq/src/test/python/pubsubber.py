@@ -8,15 +8,15 @@ import time
 def publisher(context):
     pub = context.socket(zmq.PUB)
     pub.connect("tcp://localhost:5560")
-    for n in range(1000):
-        msg = ['D', str(n)]
+    for n in range(1000,2000):
+        msg = ["D", str(n)]
         pub.send_multipart(msg)
         time.sleep(0.25)
 
 def subscriber(context):
     sub = context.socket(zmq.SUB)
     sub.connect("tcp://localhost:5559")
-    topics = 'BD'
+    topics = "BD"
     for topic in topics:
         sub.setsockopt(zmq.SUBSCRIBE, topic)
     print "subscribed to: %r" % topics

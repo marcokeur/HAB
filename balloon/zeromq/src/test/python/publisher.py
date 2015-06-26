@@ -14,6 +14,7 @@ def main():
             msg = [topic, str(n)]
             pub.send_multipart(msg)
         time.sleep(0.25)
+        print "Sent %d to topics" % n
     context.term()
 
 
