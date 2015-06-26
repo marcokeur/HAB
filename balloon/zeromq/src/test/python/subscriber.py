@@ -12,6 +12,7 @@ def main():
     topics = 'AC'
     for topic in topics:
         sub.setsockopt(zmq.SUBSCRIBE, topic)
+    sub.setsockopt(zmq.SUBSCRIBE, "CPP_TOPIC")
     print "subscribed to: %r" % topics
     while True:
         time.sleep(0.3)
