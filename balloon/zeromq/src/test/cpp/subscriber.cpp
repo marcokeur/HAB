@@ -20,13 +20,14 @@ int main(int argc, char *argv[]) {
     subscriber.connect("tcp://localhost:5559");
 
     while (1) {
-        zmq::message_t message(100);
+        zmq::message_t topic_header(4096);
+        subscriber.recv(&topic_header);
+        zmq::message_t message(4096);
         subscriber.recv(&message);
 
         std::string msg_str(static_cast<char*>(message.data()), message.size());
 
-
-        std::cout << msg_str << std::endl;
+        std::cout << "\"" << msg_str << "\"" << std::endl;
 
         usleep(250 * 100);
     }
