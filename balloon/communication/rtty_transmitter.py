@@ -13,12 +13,20 @@ ssdv = SSDV()
 image_id = 1
 TELEMETRY_EVERY=4
 
-while 1:
+# Image receiver
+imageSubcriber = ImageSubscriber("tcp://localhost:5559", "GOOD_IMAGES")
+imageSubscriber.connect()
+
+while True:
 	# Get latest image file from zeromq and generate SSDV packets
-	image_file = "test_image.jpeg"
+	# image_file = "test_image.jpeg"
+	image_file = imageSubscriber.poll(timeout=1000)
+	if image_file != None:
+		image_file = "test_image.jpeg"
+
 	image_packets = ssdv.encode(callsign='altran', image_id=str(image_id), image_file=image_file)
 	image_id += 1
-
+	
 	# Transmit 1 telemetry packet for every 4 SSDV packets 
 	i = 0
 	for packet in image_packets:

@@ -1,6 +1,6 @@
 from datetime import datetime
 import time
-import crc16
+import crcmod
 
 class TelemetryPacket:
 	'''Class for telemetry data and converting it to a telemetry sentence with checksum'''
@@ -21,9 +21,18 @@ class TelemetryPacket:
 		self.checksum 		= "0x00"
 
 
-	def calculate_checksum(self, telemetry_string):
-		'''Calculate the checksum for the telemetry string'''
-		return hex(crc16.crc16xmodem(telemetry_string, 0xffff))
+	def calculate_checksum(self, data):
+		"""
+		Calculate the CRC16 CCITT checksum of *data*.
+		(CRC16 CCITT: start 0xFFFF, poly 0x1021)
+		Returns an upper case, zero-filled hex string with no prefix such as
+		``0A1B``.
+		>>> crc16_ccitt("hello,world")
+		'E408'
+		"""
+		data = data[2:] # Ignore start tokens ($$)
+		crc16 = crcmod.predefined.mkCrcFun('crc-ccitt-false')
+		return hex(crc16(data))[2:].upper().zfill(4)
 
 	def to_sentence(self):
 		'''Generate telemetry sentence'''

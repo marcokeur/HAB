@@ -1,5 +1,6 @@
 import socket
 import sys
+import crcmod
 import crc16
 import threading
 import Queue
@@ -16,6 +17,7 @@ class TelemetryReceiver(threading.Thread):
 		self.server_address = (host, port)
 		self.connected = False
 		self.queue = queue
+		self.crc16 = crcmod.predefined.mkCrcFun('crc-ccitt-false')
 		threading.Thread.__init__ (self)
 		
 	def connect(self):
@@ -31,6 +33,18 @@ class TelemetryReceiver(threading.Thread):
 
 	def isConnected(self):
 		return self.connected
+		
+	def calculate_checksum(self, data):
+		"""
+		Calculate the CRC16 CCITT checksum of *data*.
+		(CRC16 CCITT: start 0xFFFF, poly 0x1021)
+		Returns an upper case, zero-filled hex string with no prefix such as
+		``0A1B``.
+		>>> crc16_ccitt("hello,world")
+		'E408'
+		"""
+		data = data[2:] # Ignore start tokens ($$)
+		return hex(self.crc16(data))[2:].upper().zfill(4)	
 
 	def run(self):
 		'''Receive telemetry data'''
@@ -58,13 +72,15 @@ class TelemetryReceiver(threading.Thread):
 			if start_detected and end_detected:
 				a = telemetry_sentence.split('*')
 				if len(a) == 2:
-					crc = hex(crc16.crc16xmodem(a[0], 0xffff))
-					received_crc = hex(int(a[1], 16))
+					crc = self.calculate_checksum(a[0])
+					received_crc = a[1]
 					crc_valid = (crc == received_crc)
 					if crc_valid:
 						self.queue.put(telemetry_sentence)
 					else:
 						print telemetry_sentence
 						print >>sys.stderr, 'checksum error'
+						print "calculated crc: " + crc
+						print "received crc: " + received_crc
 			# Store cur in prev	
 			prev = cur

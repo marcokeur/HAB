@@ -1,0 +1,9 @@
+
+# telemetry_gen.py
+
+Generate telemetry strings for testing
+
+# telemetry_server.py
+
+Test server for testing the telemetry uploader.
+
