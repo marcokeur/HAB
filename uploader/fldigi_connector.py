@@ -24,6 +24,6 @@ uploader = TelemetryUploader(url = 'https://hab-henryfinlandia.c9users.io/backen
 
 # Parse telemetry sentences and upload to server
 while receiver.connected:
-	sentence = telemetryQueue.get()
+	sentence = telemetryQueue.get(True, None)
 	message = parser.parse(sentence)
 	uploader.upload(message)
