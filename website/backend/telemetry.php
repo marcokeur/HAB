@@ -7,6 +7,18 @@
     $data["event_id"] = 1;
     $data["has_image"] = false;
     $data["timestamp"] = date("Y-m-d H:i:s");
+    
+    // Fetch Area location via google API.
+    $areaUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $data["latitude"] . "," . $longitude = $data["longitude"];
+    $json = file_get_contents($areaUrl);        
+    $areaData = json_decode($json);
+
+    if ($areaData->status == "OK") {
+        $data['area'] = $areaData->results[0]->formatted_address;
+    } else {
+        $data['area'] = "Unknown";
+    }
+
     $id = $db->insert('balloon', $data);
     if ($id)
         echo 'telemetry record was created. Id=' . $id ;

@@ -26,4 +26,8 @@ if (array_key_exists($_GET['page'],$pages)) {
 	echo "Page not found";
 }
 
+
+
+
+
 ?>

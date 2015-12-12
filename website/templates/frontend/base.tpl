@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   {include file="frontend/header.tpl"}
-  <body>
+  <body ng-app="habApp">
     {include file="frontend/navigation.tpl"}
     <div class="container">
     	{block name="container"}Define content in block 'container'{/block}       
@@ -14,6 +14,8 @@
     
     {block name="javascript"}
     <script src="js/hab.js"></script>
+    <script src="js/ng-hab.js"></script>
+
     {/block}
   </body>
 </html>

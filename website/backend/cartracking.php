@@ -1,6 +1,6 @@
 <?php
 
-require_once ('../inc/mysqldb.php');
+require_once ('../inc/mysqlDb.php');
 $db = new MysqliDb (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
 $distance_diff = 0;
@@ -17,7 +17,7 @@ function distance($lat1, $lon1, $lat2, $lon2) {
   return $miles * 1.609344;
 }
 
-
+$eventid = 1;
 $latitude = 0;
 $longitude = 0;
 
@@ -37,36 +37,38 @@ if (isset($_GET["android"])) {
     $android = htmlspecialchars($_GET["android"]);
 }
 
-$cols = Array ("id", "longitude", "latitude");
+//$cols = Array ("id", "longitude", "latitude");
 
-$db->where ('event_id', $eventid);
-$db->orderBy("id","desc");
+//$db->where ('event_2_id', $eventid);
+//$db->orderBy("id","desc");
 
-$lastCoordinate = $db->get ("car", Array (1, 1));
+//$lastCoordinate = $db->get ("car", Array (1, 1));
 //echo "Last executed query was ". $db->getLastQuery();
-
+/*
 if ($lastCoordinate != null) {
     $lastCoordinate[0]['latitude'];
     $lastCoordinate[0]['longitude'];
     $distance_diff = distance($lastCoordinate[0]['latitude'], $lastCoordinate[0]['longitude'], $latitude, $longitude);
-}
+}*/
 //echo $distance_diff;
 
-$data = Array ('event_id' => $eventid,
-               'timestamp' => $db->now(),
+$data = Array ('event_2_id' => "1",
+               'timestamp' => date("Y-m-d H:i:s"),
                'latitude' =>  $latitude,
                'longitude'=> $longitude
 );
 
+print_r($data);
+
 // If distance is more than 50m then insert into DB, otherwise ignore GPS location.
-if ($distance_diff > 50 || $lastCoordinate == null) {
+//if ($distance_diff > 50 || $lastCoordinate == null) {
     $id = $db->insert('car', $data);
-    if ($id)
-        echo 'car record was created. Id=' . $id;
-    else
-        echo 'insert failed: ' . $db->getLastError();
+  //  if ($id)
+        //echo 'car record was created. Id=' . $id;
+    //else
+      //  echo 'insert failed: ' . $db->getLastError();
     
-}
+//}
 
 /*
 $carItems = $db->get ("car", null, $cols);
