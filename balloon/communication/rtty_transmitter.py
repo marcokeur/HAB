@@ -12,7 +12,7 @@ GOOD_IMAGES_TOPIC = "/camera/picture/processed/location"
 TELEMETRY_TOPIC = "/communication/rf"
 HUMIDITY_TOPIC = "A"
 NTX2_UART = "UART5"
-NTX2_PORT = "/dev/tty05"
+NTX2_PORT = "/dev/ttyO5"
 
 
 class RTTY_Transmitter:
