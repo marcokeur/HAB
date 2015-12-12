@@ -22,6 +22,10 @@ static const std::string IN_TOPIC = INCOMING_TOPIC;
 
 static const std::string OUT_TOPIC = OUTGOING_TOPIC;
 
+#ifndef MAXIMUM_IMAGES_TO_BLOCK
+#define MAXIMUM_IMAGES_TO_BLOCK 9
+#endif
+
 int main(int argc, char **argv) {
     int pid = (int) getpid();
     std::stringstream ss;
@@ -41,6 +45,7 @@ int main(int argc, char **argv) {
 
     zmq::message_t topic_header(4096);
     zmq::message_t message(4096);
+    int blockedImages = 0;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
@@ -59,10 +64,13 @@ int main(int argc, char **argv) {
 
             logger->info(result->message);
 
-            if (result->send) {
+            if (result->send || blockedImages > MAXIMUM_IMAGES_TO_BLOCK) {
                 logger->info("Sending for " + result->sourceImageFile + ": " + result->editedImageFile);
                 publisher.send(OUT_TOPIC.data(), OUT_TOPIC.size(), ZMQ_SNDMORE);
                 publisher.send(result->editedImageFile.data(), result->editedImageFile.size(), ZMQ_DONTWAIT);
+                blockedImages = 0;
+            } else {
+                blockedImages += 1;
             }
         }
     }
