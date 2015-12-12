@@ -11,7 +11,7 @@ if (NOT SOFTFP)
 endif()
 
 set(CMAKE_C_COMPILER    arm-linux-gnueabi${FLOAT_ABI_SUFFIX}-gcc)
-set(CMAKE_CXX_COMPILER  arm-linux-gnueabi${FLOAT_ABI_SUFFIX}-c++)
+set(CMAKE_CXX_COMPILER  arm-linux-gnueabi${FLOAT_ABI_SUFFIX}-g++)
 set(ARM_LINUX_SYSROOT /usr/local/beaglebone-sysroot CACHE PATH "ARM cross compilation system root")
 
 set(CMAKE_CXX_FLAGS           ""                    CACHE STRING "c++ flags")
