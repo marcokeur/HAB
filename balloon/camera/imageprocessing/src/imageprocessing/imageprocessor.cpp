@@ -132,7 +132,6 @@ namespace imageprocessor {
         ss << "Image mean: " << mean << " and std: " << std;
         logger->trace(ss.str());
 
-
         return (mean >= 100) && (std > 30);
     }
 
