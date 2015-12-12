@@ -28,19 +28,8 @@ class RTTY_Transmitter:
 		self.ssdv = SSDV()
 		
 		# Image receiver
-		self.imageSubscriber = Subscriber(BROKER_URL, GOOD_IMAGES_TOPIC)
-		self.imageSubscriber.connect()
-		self.imageSubscriber.start()
-		
-		# Telemetry receiver 
-		self.humiditySubscriber = Subscriber(BROKER_URL, HUMIDITY_TOPIC)
-		self.humiditySubscriber.connect()
-		self.humiditySubscriber.start()
-		
-		# Humidity subscription
-		self.gpsSubscriber = Subscriber(BROKER_URL, GPS_TOPIC)
-		self.gpsSubscriber.connect()
-		self.gpsSubscriber.start()
+		self.subscriber = Subscriber(BROKER_URL, [GOOD_IMAGES_TOPIC, HUMIDITY_TOPIC, GPS_TOPIC])
+		self.subscriber.start()
 		
 		self.image_id = 1
 		self.sentence_id = 1
@@ -51,7 +40,7 @@ class RTTY_Transmitter:
 
 		while True:
 			# Get latest image file from zeromq and generate SSDV packets
-			image_file = self.imageSubscriber.get()
+			image_file = self.subscriber.get(GOOD_IMAGES_TOPIC)
 			if image_file != None:
 				self.send_image_with_telemetry(image_file)
 			else:
@@ -62,7 +51,7 @@ class RTTY_Transmitter:
 		'''Get and send telemetry data'''
 		
 		# Get GPS data
-		gps_string = self.gpsSubscriber.get()
+		gps_string = self.subscriber.get(GPS_TOPIC)
 		lat = float(0.0)
 		lon = float(0.0)
 		alt = 0
@@ -72,8 +61,8 @@ class RTTY_Transmitter:
 			lon = float(gps[1])
 			alt = int(float(gps[2]))
 		
-		
-		humidity = self.humiditySubscriber.get()
+		# Get humidity
+		humidity = self.subscriber.get(HUMIDITY_TOPIC)
 		if humidity == None:
 			humidity = 0
 			
