@@ -1,3 +1,5 @@
+#include <unistd.h>
+#include <sstream>
 #include "../imageprocessing/imageprocessor.hpp"
 #include "../logging/logging.hpp"
 #include "zmq.hpp"
@@ -21,7 +23,10 @@ static const std::string IN_TOPIC = INCOMING_TOPIC;
 static const std::string OUT_TOPIC = OUTGOING_TOPIC;
 
 int main(int argc, char **argv) {
-    logger->info("Started image processing module...");
+    int pid = (int) getpid();
+    std::stringstream ss;
+    ss << "Started image processing module with pid " << pid;
+    logger->info(ss.str());
 
     logger->info(IN_TOPIC);
 
@@ -34,21 +39,34 @@ int main(int argc, char **argv) {
     zmq::socket_t publisher(context, ZMQ_PUB);
     publisher.connect("tcp://localhost:5560");
 
-    zmq::message_t message(100);
-    subscriber.recv(&message, ZMQ_RCVMORE);
-    subscriber.recv(&message);
+    zmq::message_t topic_header(4096);
+    zmq::message_t message(4096);
 
-    std::string msg_str(static_cast<char*>(message.data()), message.size());
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+    while(true) {
+        subscriber.recv(&topic_header);
+        std::string header_str(static_cast<char *>(topic_header.data()), topic_header.size());
+        if(header_str.compare(IN_TOPIC) == 0) {
+            subscriber.recv(&message);
 
-    const Input *const input = new Input(msg_str);
-    const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
+            std::string msg_str(static_cast<char *>(message.data()), message.size());
 
-    logger->info(result->message);
+            logger->info("Received location: " + msg_str);
 
-    if(result->send) {
-        publisher.send(OUT_TOPIC.data(), OUT_TOPIC.size(), ZMQ_SNDMORE);
-        publisher.send(result->editedImageFile.data(), result->editedImageFile.size(), 0);
+            const Input *const input = new Input(msg_str);
+            const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
+
+            logger->info(result->message);
+
+            if (result->send) {
+                logger->info("Sending for " + result->sourceImageFile + ": " + result->editedImageFile);
+                publisher.send(OUT_TOPIC.data(), OUT_TOPIC.size(), ZMQ_SNDMORE);
+                publisher.send(result->editedImageFile.data(), result->editedImageFile.size(), ZMQ_DONTWAIT);
+            }
+        }
     }
+#pragma clang diagnostic pop
 
     logger->error("The image processing module is shutting down in a normal way...");
     context.close();

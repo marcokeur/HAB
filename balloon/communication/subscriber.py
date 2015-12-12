@@ -1,8 +1,9 @@
 import zmq
 import time
+import threading
 
-class ImageSubscriber:
-	'''Zeromq subscriber for the images queue'''
+class Subscriber(threading.Thread):
+	'''Zeromq subscriber'''
 
 	def __init__(self, address, topic):
 		'''Default constructor'''
@@ -10,6 +11,17 @@ class ImageSubscriber:
 		self.topic = topic
 		self.context = None
 		self.sub = None
+		self.last_message = None
+		threading.Thread.__init__ (self)
+		
+	def run(self):
+		while True:
+			data = self._poll(100)
+			if data != None: 
+				self.last_message = data
+			
+	def get(self):
+		return self.last_message
 
 	def connect(self):
 		'''Connect the zeromq subscriber'''
@@ -17,9 +29,8 @@ class ImageSubscriber:
 		self.sub = context.socket(zmq.SUB)
 		self.sub.connect(self.address)
 		self.sub.setsockopt(zmq.SUBSCRIBE, self.topic)
-		self.sub.setsockopt(zmq.CONFLATE, 1)
 
-	def poll(self, timeout):
+	def _poll(self, timeout):
 		if self.sub.poll(timeout=timeout):
 			data = self.sub.recv_multipart()
 			if data != None and len(data) == 2:

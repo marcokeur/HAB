@@ -123,7 +123,6 @@ namespace logging {
                 " " <<
                 std::setw(5) << std::setfill(' ') << level <<
                 " - " << format << std::endl;
-
         std::cout << stream.str();
     }
 }
