@@ -74,8 +74,8 @@ class RTTY_Transmitter:
 		gps_string = self.gpsSubscriber.get()
 		if gps_string != None:
 			gps = gps_string.split(",")
-			lat = gps[0]
-			lon = gps[1]
+			lat = float(gps[0])
+			lon = float(gps[1])
 			alt = int(float(gps[2]))
 		
 		# Create TelemetryPacket
