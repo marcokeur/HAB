@@ -68,33 +68,34 @@ class RTTY_Transmitter:
 		
 		# TODO: build TelemetryPacket from data
 		
-		lat = 0.0
-		lon = 0.0
-		alt = 0
+
 		gps_string = self.gpsSubscriber.get()
 		if gps_string != None:
 			gps = gps_string.split(",")
+			print gps
 			lat = float(gps[0])
 			lon = float(gps[1])
 			alt = int(float(gps[2]))
 		
-		# Create TelemetryPacket
-		telemetry = TelemetryPacket(callsign='altran', 
-									sentence_id=self.sentence_id, 
-									lat=lat, 
-									lon=lon, 
-									alt=alt, 
-									in_temp=0.0, 
-									out_temp=0.0, 
-									humidity=0, 
-									air_pressure=100)
-		
-		# Generate telemetry sentence with CRC checksum
-		sentence = telemetry.to_sentence()
-
-		# Send telemetry packet
-		self.transmitter.transmit(sentence)
-		self.sentence_id += 1
+			# Create TelemetryPacket
+			telemetry = TelemetryPacket(callsign='altran', 
+										sentence_id=self.sentence_id, 
+										lat=lat, 
+										lon=lon, 
+										alt=alt, 
+										in_temp=0.0, 
+										out_temp=0.0, 
+										humidity=0, 
+										air_pressure=100)
+			
+			# Generate telemetry sentence with CRC checksum
+			sentence = telemetry.to_sentence()
+	
+			# Send telemetry packet
+			self.transmitter.transmit(sentence)
+			self.sentence_id += 1
+		else:
+			print "No GPS"
 		
 		
 	def send_image_with_telemetry(self, image_file):
