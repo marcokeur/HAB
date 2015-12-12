@@ -2,6 +2,7 @@ __author__ = 'Tombruin'
 from Adafruit_I2C import Adafruit_I2C
 import time
 import zmq
+import sys
 
 MPL3115_STATUS              =0x00
 MPL3115_PRESSURE_DATA       =0x01
@@ -80,6 +81,7 @@ def main():
 	while 1:
 		humidity = pres.readpressure() / 100;
 		print "Air pressure: %d mbar" % humidity
+		sys.stdout.flush()
 		msg = ["/sensor/airpressure", str(humidity)]
 		pub.send_multipart(msg)
 		time.sleep(1)
