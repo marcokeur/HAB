@@ -16,6 +16,7 @@ class Subscriber(threading.Thread):
 		self.sub.connect(self.address)
 		for topic in topics:
 			self.sub.setsockopt(zmq.SUBSCRIBE, topic)
+			self.last_message[topic] = None
 		threading.Thread.__init__ (self)
 		
 	def run(self):
