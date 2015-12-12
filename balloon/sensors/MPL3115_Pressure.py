@@ -79,7 +79,7 @@ def main():
 	pub = context.socket(zmq.PUB)
 	pub.connect("tcp://localhost:5560")
 	while 1:
-		humidity = format(pres.readpressure() / 100),'.0f')
+		humidity = int(pres.readpressure() / 100)
 		print "Air pressure: %d mbar" % humidity
 		sys.stdout.flush()
 		msg = ["/sensor/airpressure", str(humidity)]
