@@ -41,7 +41,6 @@ class RTTY_Transmitter:
 		
 		self.image_id = 1
 		self.sentence_id = 1
-		threading.Thread.__init__ (self)
 		
 	def stop(self):
 		self.subscriber.join()
