@@ -43,7 +43,9 @@ class RTTY_Transmitter:
 			if image_file != None:
 				self.send_image_with_telemetry(image_file)
 			else:
-				self.send_telemetry()
+				# TODO: REMOVE TEST IMAGE
+				self.send_image_with_telemetry("test_image.jpeg")
+				#self.send_telemetry()
 		
 
 	def send_telemetry(self):
