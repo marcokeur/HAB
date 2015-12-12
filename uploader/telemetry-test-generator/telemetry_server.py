@@ -49,7 +49,7 @@ def main(argv):
 			for line in open(datafile, 'r'):
 				for c in line:
 					connection.send(c)
-					time.sleep(0.05)     
+					time.sleep(0.05)
 		except:
 			print "connection closed"
 		finally:

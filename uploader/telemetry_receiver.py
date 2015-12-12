@@ -57,6 +57,7 @@ class TelemetryReceiver(threading.Thread):
 			# Read character from socket
 			cur = self.sock.recv(8)
 
+
 			# Wait for sentence header
 			if not start_detected:
 				start_detected = (cur == '$' and prev == '$')
@@ -66,7 +67,12 @@ class TelemetryReceiver(threading.Thread):
 			elif start_detected and not end_detected:
 				end_detected = (cur == '\n')
 				if not end_detected:
-					telemetry_sentence += cur
+					if cur == '$':
+						# Reset when new start token received
+						telemetry_sentence = ""
+						start_detected = False
+					else:
+						telemetry_sentence += cur
 
 			# If start and end are detected, check the CRC checksum		
 			if start_detected and end_detected:

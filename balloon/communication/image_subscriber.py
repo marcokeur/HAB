@@ -14,13 +14,13 @@ class ImageSubscriber:
 	def connect(self):
 		'''Connect the zeromq subscriber'''
 		context = zmq.Context()
-	    self.sub = context.socket(zmq.SUB)
-	    self.sub.connect(self.address)
-	    self.sub.setsockopt(zmq.SUBSCRIBE, self.topic)
-	    self.sub.setsockopt(zmq.CONFLATE, 1)
+		self.sub = context.socket(zmq.SUB)
+		self.sub.connect(self.address)
+		self.sub.setsockopt(zmq.SUBSCRIBE, self.topic)
+		self.sub.setsockopt(zmq.CONFLATE, 1)
 
 	def poll(self, timeout):
-		if sub.poll(timeout=timeout):
-			return sub.recv_multipart()
+		if self.sub.poll(timeout=timeout):
+			return self.sub.recv_multipart()
 		else:
 			return None
