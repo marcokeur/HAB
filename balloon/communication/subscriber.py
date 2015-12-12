@@ -1,8 +1,8 @@
 import zmq
 import time
 
-class ImageSubscriber:
-	'''Zeromq subscriber for the images queue'''
+class Subscriber:
+	'''Zeromq subscriber'''
 
 	def __init__(self, address, topic):
 		'''Default constructor'''

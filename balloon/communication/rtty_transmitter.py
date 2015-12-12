@@ -3,12 +3,14 @@
 from NTX2_Transmitter import NTX2_Transmitter
 from ssdv import SSDV
 from telemetry_packet import TelemetryPacket
-from image_subscriber import ImageSubscriber
+from subscriber import Subscriber
 
 
 TELEMETRY_EVERY = 4
 BROKER_URL = "tcp://localhost:5559"
 GOOD_IMAGES_TOPIC = "/camera/picture/processed/location"
+TELEMETRY_TOPIC = "/communication/rf"
+HUMIDITY_TOPIC = "A"
 NTX2_UART = "UART5"
 NTX2_PORT = "/dev/tty05"
 
@@ -26,8 +28,17 @@ class RTTY_Transmitter:
 		self.ssdv = SSDV()
 		
 		# Image receiver
-		self.imageSubscriber = ImageSubscriber(BROKER_URL, GOOD_IMAGES_TOPIC)
+		self.imageSubscriber = Subscriber(BROKER_URL, GOOD_IMAGES_TOPIC)
 		self.imageSubscriber.connect()
+		
+		# Telemetry receiver 
+		self.telemetrySubscriber = Subscriber(BROKER_URL, TELEMETRY_TOPIC)
+		self.telemetrySubscriber.connect()
+		
+		# Humidity subscription
+		self.humiditySub = Subscriber(BROKER_URL, HUMIDITY_TOPIC)
+		self.humiditySub.connect()
+		
 		self.image_id = 1
 		self.sentence_id = 1
 
@@ -37,24 +48,26 @@ class RTTY_Transmitter:
 
 		while True:
 			# Get latest image file from zeromq and generate SSDV packets
-			# image_file = "test_image.jpeg"
-			
-			image_file = self.imageSubscriber.poll(timeout=1000)
+			image_file = self.imageSubscriber.poll(timeout=5000)
 			if image_file != None:
 				self.send_image_with_telemetry(image_file)
 			else:
-				# TODO: REMOVE TEST IMAGE
-				self.send_image_with_telemetry("test_image.jpeg")
-				#self.send_telemetry()
+				self.send_telemetry()
 		
 
 	def send_telemetry(self):
 		'''Get and send telemetry data'''
-		# Get latest sensor values from zeromq
-		# Get latest gps data from zeromq
-		# Extract latitude, longitude, altitude
-		# Calculate speed and ascent_rate
-
+		# Get latest telemetry data
+		#data = self.telemetrySubscriber.poll(timeout=1000)
+		#if data == None:
+		#	return
+		
+		# TODO: build TelemetryPacket from data
+		
+		# Test read humidity
+		humidity = self.humiditySub.poll(timeout=1000)
+		print "Humidity: " + humidity
+		
 		# Create TelemetryPacket
 		telemetry = TelemetryPacket(callsign='altran', 
 									sentence_id=self.sentence_id, 
@@ -63,7 +76,7 @@ class RTTY_Transmitter:
 									alt=0, 
 									in_temp=0.0, 
 									out_temp=0.0, 
-									humidity=100, 
+									humidity=humidity, 
 									air_pressure=100)
 		
 		# Generate telemetry sentence with CRC checksum
