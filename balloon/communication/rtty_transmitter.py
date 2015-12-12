@@ -5,6 +5,7 @@ from ssdv import SSDV
 from telemetry_packet import TelemetryPacket
 from subscriber import Subscriber
 import time
+import sys
 
 TELEMETRY_EVERY = 4
 BROKER_URL = "tcp://localhost:5559"
@@ -36,19 +37,22 @@ class RTTY_Transmitter:
 		
 		# Image receiver
 		self.subscriber = Subscriber(BROKER_URL, [GOOD_IMAGES_TOPIC, HUMIDITY_TOPIC, GPS_TOPIC, TEMP_INTERNAL_TOPIC, TEMP_EXTENAL_TOPIC, AIR_PRESSURE_TOPIC])
-		self.subscriber.daemon = True
 		self.subscriber.start()
 		
 		self.image_id = 1
 		self.sentence_id = 1
+		self.isRunning = False
 		
 	def stop(self):
+		self.isRunning = False
+		self.subscriber.stop()
 		self.subscriber.join()
 
 	def run(self):
 		'''Read last good image, telemetry data and send with NTX2 transmitter'''
+		self.isRunning = True
 		try:
-			while True:
+			while self.isRunning:
 				# Get latest image file from zeromq and generate SSDV packets
 				image_file = self.subscriber.get(GOOD_IMAGES_TOPIC)
 				if image_file != None:
@@ -149,3 +153,4 @@ if __name__ == "__main__":
 		rtty_transmitter.run()
 	except KeyboardInterrupt:
 		rtty_transmitter.stop()
+		sys.exit()

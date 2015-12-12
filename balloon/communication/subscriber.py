@@ -15,13 +15,15 @@ class Subscriber(threading.Thread):
 		context = zmq.Context()
 		self.sub = context.socket(zmq.SUB)
 		self.sub.connect(self.address)
+		self.isRunning = False
 		for topic in topics:
 			self.sub.setsockopt(zmq.SUBSCRIBE, topic)
 			self.last_message[topic] = None
 		threading.Thread.__init__ (self)
 		
 	def run(self):
-		while True:
+		self.isRunning = True
+		while self.isRunning:
 			if self.sub.poll(timeout=500):
 				data = self.sub.recv_multipart()
 				if data != None and len(data) == 2:
@@ -31,4 +33,7 @@ class Subscriber(threading.Thread):
 				
 	def get(self, topic):
 		return self.last_message[topic]
+		
+	def stop(self):
+		self.isRunning = False
 	
