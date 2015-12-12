@@ -51,7 +51,7 @@ class RTTY_Transmitter:
 
 		while True:
 			# Get latest image file from zeromq and generate SSDV packets
-			image_file = self.imageSubscriber.poll(timeout=5000)
+			image_file = self.imageSubscriber.get()
 			if image_file != None:
 				self.send_image_with_telemetry(image_file)
 			else:
@@ -61,7 +61,7 @@ class RTTY_Transmitter:
 	def send_telemetry(self):
 		'''Get and send telemetry data'''
 		# Get latest telemetry data
-		#data = self.telemetrySubscriber.poll(timeout=1000)
+		#data = self.telemetrySubscriber.get()
 		#if data == None:
 		#	return
 		
