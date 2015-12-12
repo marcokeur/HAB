@@ -1,7 +1,6 @@
 import socket
 import sys
 import crcmod
-import crc16
 import threading
 import Queue
 
@@ -83,6 +82,7 @@ class TelemetryReceiver(threading.Thread):
 					crc_valid = (crc == received_crc)
 					if crc_valid:
 						self.queue.put(telemetry_sentence)
+						print "OK: " + telemetry_sentence
 					else:
 						print telemetry_sentence
 						print >>sys.stderr, 'checksum error'

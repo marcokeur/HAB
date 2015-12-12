@@ -11,4 +11,5 @@ class TelemetryUploader:
 
 	def upload(self, message):
 		post_response = requests.post(url=self.url, data=message)
+		return post_response
 		

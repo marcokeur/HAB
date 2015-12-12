@@ -20,7 +20,7 @@ receiver.connect()
 receiver.start()
 
 parser = SentenceParser()
-uploader = TelemetryUploader(url = 'https://hab-tomregelink.c9users.io/website/backend/telemetry.php')
+uploader = TelemetryUploader(url = 'https://hab-henryfinlandia.c9users.io/backend/telemetry.php')
 
 # Parse telemetry sentences and upload to server
 while receiver.connected:

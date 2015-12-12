@@ -1,19 +1,23 @@
 <?php
-    require_once ('../inc/mysqldb.php');
+    require_once ('../inc/mysqlDb.php');
     $db = new MysqliDb (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+
+    $data = $_POST;
     
-    // $data = $_POST; // TODO: Clean POST
-    // $id = $db->insert('telemetry', $data);
-    // if ($id)
-    //     echo 'telemetry record was created. Id=' . $id;
-    // else
-    //     echo 'insert failed: ' . $db->getLastError();
+    $data["event_id"] = 1;
+    $data["has_image"] = false;
+    $data["timestamp"] = date("Y-m-d H:i:s");
+    $id = $db->insert('balloon', $data);
+    if ($id)
+        echo 'telemetry record was created. Id=' . $id ;
+    else
+        echo 'insert failed: ' . $db->getLastError();
 ?>
 
 <!--
 Telemetry data
 Array (
-    [timestamp] => 18-26-01
+    [timestamp_balloon] => 18-26-01
     [altitude] => 500
     [internal_temp] => 5.3
     [longitude] => 42.44431
