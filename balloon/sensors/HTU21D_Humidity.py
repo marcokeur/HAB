@@ -1,7 +1,8 @@
 __author__ = 'Tombruin'
 import time
+import zmq
 from Adafruit_I2C import Adafruit_I2C
-
+		
 # ===========================================================================
 # HTU21D Class
 # ===========================================================================
@@ -76,3 +77,25 @@ class HTU21D:
             return True
         else:
             return False
+				
+def main():	
+	htu = HTU21D()
+	context = zmq.Context()
+	pub = context.socket(zmq.PUB)
+	pub.connect("tcp://localhost:5560")
+	while 1:
+		humidity = format(htu.readHumidityData(),'2.0f');
+		print "humidity:  {0}", humidity
+		msg = ["/sensor/humidity", str(humidity)]
+		pub.send_multipart(msg)
+		time.sleep(1)
+		
+# Only run the code when executed by it self. and not imported			
+if __name__ == "__main__":
+    main()		
+		
+		
+		
+		
+		
+		
