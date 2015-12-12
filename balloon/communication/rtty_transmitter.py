@@ -10,7 +10,7 @@ TELEMETRY_EVERY = 4
 BROKER_URL = "tcp://localhost:5559"
 GOOD_IMAGES_TOPIC = "/camera/picture/processed/location"
 NTX2_UART = "UART5"
-NTX2_PORT = "/dev/tty05"
+NTX2_PORT = "/dev/ttyO5"
 
 
 class RTTY_Transmitter:
