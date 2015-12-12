@@ -34,21 +34,30 @@ int main(int argc, char **argv) {
     zmq::socket_t publisher(context, ZMQ_PUB);
     publisher.connect("tcp://localhost:5560");
 
-    zmq::message_t message(100);
-    subscriber.recv(&message, ZMQ_RCVMORE);
-    subscriber.recv(&message);
+    zmq::message_t topic_header(4096);
+    zmq::message_t message(4096);
 
-    std::string msg_str(static_cast<char*>(message.data()), message.size());
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+    while(true) {
+        subscriber.recv(&topic_header);
+        subscriber.recv(&message);
 
-    const Input *const input = new Input(msg_str);
-    const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
+        std::string msg_str(static_cast<char *>(message.data()), message.size());
 
-    logger->info(result->message);
+        logger->info("Received location: " + msg_str);
 
-    if(result->send) {
-        publisher.send(OUT_TOPIC.data(), OUT_TOPIC.size(), ZMQ_SNDMORE);
-        publisher.send(result->editedImageFile.data(), result->editedImageFile.size(), 0);
+        const Input *const input = new Input(msg_str);
+        const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
+
+        logger->info(result->message);
+
+        if (result->send) {
+            publisher.send(OUT_TOPIC.data(), OUT_TOPIC.size(), ZMQ_SNDMORE);
+            publisher.send(result->editedImageFile.data(), result->editedImageFile.size(), 0);
+        }
     }
+#pragma clang diagnostic pop
 
     logger->error("The image processing module is shutting down in a normal way...");
     context.close();

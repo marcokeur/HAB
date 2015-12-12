@@ -3,7 +3,6 @@ __author__ = 'timoveldt'
 import zmq
 import time
 
-
 def main():
     context = zmq.Context()
 
@@ -13,10 +12,10 @@ def main():
         for topic in "ABC":
             msg = [topic, str(n)]
             pub.send_multipart(msg)
+        pub.send_multipart(["/camera/picture/raw/location", "image_" + str(n)])
         time.sleep(0.25)
         print "Sent %d to topics" % n
     context.term()
-
 
 if __name__ == "__main__":
     main()
