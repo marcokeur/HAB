@@ -11,7 +11,7 @@ BROKER_URL = "tcp://localhost:5559"
 GOOD_IMAGES_TOPIC = "/camera/picture/processed/location"
 TELEMETRY_TOPIC = "/communication/rf"
 HUMIDITY_TOPIC = "/sensor/humidity"
-GPS_TOPIC = "/sensor/gps/position"
+GPS_TOPIC = "/sensor/gps/location"
 NTX2_UART = "UART5"
 NTX2_PORT = "/dev/ttyO5"
 
@@ -39,9 +39,9 @@ class RTTY_Transmitter:
 		self.telemetrySubscriber.start()
 		
 		# Humidity subscription
-		self.humiditySub = Subscriber(BROKER_URL, GPS_TOPIC)
-		self.humiditySub.connect()
-		self.humiditySub.start()
+		self.gpsSubscriber = Subscriber(BROKER_URL, GPS_TOPIC)
+		self.gpsSubscriber.connect()
+		self.gpsSubscriber.start()
 		
 		self.image_id = 1
 		self.sentence_id = 1
@@ -68,17 +68,22 @@ class RTTY_Transmitter:
 		
 		# TODO: build TelemetryPacket from data
 		
-		humidity = self.humiditySub.get()
-		if humidity != None:
-			print humidity
-		
+		lat = 0.0
+		lon = 0.0
+		alt = 0
+		gps_string = self.gpsSubscriber.get()
+		if gps_string != None:
+			gps = gps_string.split(",")
+			lat = gps[0]
+			lon = gps[1]
+			alt = int(float(gps[2]))
 		
 		# Create TelemetryPacket
 		telemetry = TelemetryPacket(callsign='altran', 
 									sentence_id=self.sentence_id, 
-									lat=0.0000, 
-									lon=0.0000, 
-									alt=0, 
+									lat=lat, 
+									lon=lon, 
+									alt=alt, 
 									in_temp=0.0, 
 									out_temp=0.0, 
 									humidity=0, 
