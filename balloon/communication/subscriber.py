@@ -1,6 +1,7 @@
 import zmq
 import time
 import threading
+import time
 
 class Subscriber(threading.Thread):
 	'''Zeromq subscriber'''
@@ -21,19 +22,13 @@ class Subscriber(threading.Thread):
 		
 	def run(self):
 		while True:
-			data = self._poll(100)
-			if data != None: 
-				self.last_message[data[0]] = data[1]
-			
+			if self.sub.poll(timeout=500):
+				data = self.sub.recv_multipart()
+				if data != None and len(data) == 2:
+					self.last_message[data[0]] = data[1]
+			else:
+				time.sleep(1)
+				
 	def get(self, topic):
 		return self.last_message[topic]
-
-	def _poll(self, timeout):
-		if self.sub.poll(timeout=timeout):
-			data = self.sub.recv_multipart()
-			if data != None and len(data) == 2:
-				return data
-			else:
-				return None
-		else:
-			return None
+	

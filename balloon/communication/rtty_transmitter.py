@@ -4,7 +4,7 @@ from NTX2_Transmitter import NTX2_Transmitter
 from ssdv import SSDV
 from telemetry_packet import TelemetryPacket
 from subscriber import Subscriber
-
+import time
 
 TELEMETRY_EVERY = 4
 BROKER_URL = "tcp://localhost:5559"
@@ -52,8 +52,9 @@ class RTTY_Transmitter:
 					self.send_image_with_telemetry(image_file)
 				else:
 					self.send_telemetry()
+					time.sleep(5)
 			except Exception, e:
-				raise e
+				print "Exception in rtty_transmitter.py run method"
 		
 
 	def send_telemetry(self):
@@ -64,11 +65,11 @@ class RTTY_Transmitter:
 		
 		# Generate telemetry sentence with CRC checksum
 		sentence = telemetry.to_sentence()
-
+		print sentence
+		
 		# Send telemetry packet
 		self.transmitter.transmit(sentence)
 		self.sentence_id += 1
-
 		
 		
 	def send_image_with_telemetry(self, image_file):
@@ -76,12 +77,10 @@ class RTTY_Transmitter:
 		i = 0
 		image_packets = self.ssdv.encode(callsign='altran', image_id=str(self.image_id), image_file=image_file)
 		for ssdv_packet in image_packets:
+			self.transmitter.transmit(ssdv_packet)
 			if (i % TELEMETRY_EVERY) == 0:
 				self.send_telemetry()
-				
-			self.transmitter.transmit(ssdv_packet)
 			i += 1
-			
 		self.image_id += 1	
 		
 		
