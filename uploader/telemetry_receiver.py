@@ -83,6 +83,9 @@ class TelemetryReceiver(threading.Thread):
 					if crc_valid:
 						self.queue.put(telemetry_sentence)
 						print "OK: " + telemetry_sentence
+						telemetry_sentence = ""
+						start_detected = False
+						end_detected = False
 					else:
 						print telemetry_sentence
 						print >>sys.stderr, 'checksum error'

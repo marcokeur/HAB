@@ -21,6 +21,10 @@ class ImageSubscriber:
 
 	def poll(self, timeout):
 		if self.sub.poll(timeout=timeout):
-			return self.sub.recv_multipart()
+			data = self.sub.recv_multipart()
+			if data != None and len(data) == 2:
+				return data[1]
+			else:
+				return None
 		else:
 			return None
