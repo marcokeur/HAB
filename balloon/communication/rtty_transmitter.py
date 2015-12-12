@@ -10,7 +10,7 @@ TELEMETRY_EVERY = 4
 BROKER_URL = "tcp://localhost:5559"
 GOOD_IMAGES_TOPIC = "/camera/picture/processed/location"
 TELEMETRY_TOPIC = "/communication/rf"
-HUMIDITY_TOPIC = "A"
+HUMIDITY_TOPIC = "/sensor/humidity"
 NTX2_UART = "UART5"
 NTX2_PORT = "/dev/ttyO5"
 
@@ -30,14 +30,17 @@ class RTTY_Transmitter:
 		# Image receiver
 		self.imageSubscriber = Subscriber(BROKER_URL, GOOD_IMAGES_TOPIC)
 		self.imageSubscriber.connect()
+		self.imageSubscriber.start()
 		
 		# Telemetry receiver 
 		self.telemetrySubscriber = Subscriber(BROKER_URL, TELEMETRY_TOPIC)
 		self.telemetrySubscriber.connect()
+		self.telemetrySubscriber.start()
 		
 		# Humidity subscription
 		self.humiditySub = Subscriber(BROKER_URL, HUMIDITY_TOPIC)
 		self.humiditySub.connect()
+		self.humiditySub.start()
 		
 		self.image_id = 1
 		self.sentence_id = 1
@@ -64,9 +67,8 @@ class RTTY_Transmitter:
 		
 		# TODO: build TelemetryPacket from data
 		
-		# Test read humidity
-		humidity = self.humiditySub.poll(timeout=1000)
-		print "Humidity: " + humidity
+		humidity = self.humiditySub.get()
+		print humidity
 		
 		# Create TelemetryPacket
 		telemetry = TelemetryPacket(callsign='altran', 
@@ -76,7 +78,7 @@ class RTTY_Transmitter:
 									alt=0, 
 									in_temp=0.0, 
 									out_temp=0.0, 
-									humidity=humidity, 
+									humidity=0, 
 									air_pressure=100)
 		
 		# Generate telemetry sentence with CRC checksum
