@@ -1,6 +1,7 @@
 __author__ = 'Tombruin'
 import time
 import zmq
+import sys
 from Adafruit_I2C import Adafruit_I2C
 		
 # ===========================================================================
@@ -86,6 +87,7 @@ def main():
 	while 1:
 		humidity = format(htu.readHumidityData(),'2.0f');
 		print "humidity:  {0}", humidity
+		sys.stdout.flush()
 		msg = ["/sensor/humidity", str(humidity)]
 		pub.send_multipart(msg)
 		time.sleep(1)

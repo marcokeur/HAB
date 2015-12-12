@@ -1,6 +1,8 @@
 __author__ = 'Tombruin'
 from Adafruit_I2C import Adafruit_I2C
 import time
+import zmq
+import sys
 
 MPL3115_STATUS              =0x00
 MPL3115_PRESSURE_DATA       =0x01
@@ -70,3 +72,20 @@ class MPL3115:
                 pass
             time.sleep(0.05)
         return pressure
+		
+def main():	
+	pres = MPL3115()
+	context = zmq.Context()
+	pub = context.socket(zmq.PUB)
+	pub.connect("tcp://localhost:5560")
+	while 1:
+		humidity = format(pres.readpressure() / 100),'.0f')
+		print "Air pressure: %d mbar" % humidity
+		sys.stdout.flush()
+		msg = ["/sensor/airpressure", str(humidity)]
+		pub.send_multipart(msg)
+		time.sleep(1)
+		
+# Only run the code when executed by it self. and not imported			
+if __name__ == "__main__":
+    main()	
