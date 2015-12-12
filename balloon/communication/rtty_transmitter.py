@@ -75,7 +75,7 @@ class RTTY_Transmitter:
 									alt=alt, 
 									in_temp=0.0, 
 									out_temp=0.0, 
-									humidity=humidity, 
+									humidity=int(humidity), 
 									air_pressure=100)
 		
 		# Generate telemetry sentence with CRC checksum
