@@ -35,6 +35,8 @@ namespace imageprocessor {
         logger->info("Processing " + input->imageFile);
         ResultBuilder resultBuilder;
         resultBuilder.sourceImageFile = input->imageFile;
+        // not editing image yet, so input == output.
+        resultBuilder.editedImageFile = input->imageFile;
         resultBuilder.send = false;
         resultBuilder.message = "Processing...";
 

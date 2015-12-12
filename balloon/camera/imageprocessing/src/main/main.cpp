@@ -60,8 +60,9 @@ int main(int argc, char **argv) {
             logger->info(result->message);
 
             if (result->send) {
+                logger->info("Sending for " + result->sourceImageFile + ": " + result->editedImageFile);
                 publisher.send(OUT_TOPIC.data(), OUT_TOPIC.size(), ZMQ_SNDMORE);
-                publisher.send(result->editedImageFile.data(), result->editedImageFile.size(), 0);
+                publisher.send(result->editedImageFile.data(), result->editedImageFile.size(), ZMQ_DONTWAIT);
             }
         }
     }
