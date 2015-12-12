@@ -91,5 +91,8 @@ class TelemetryReceiver(threading.Thread):
 						print >>sys.stderr, 'checksum error'
 						print "calculated crc: " + crc
 						print "received crc: " + received_crc
+						telemetry_sentence = ""
+						start_detected = False
+						end_detected = False
 			# Store cur in prev	
 			prev = cur
