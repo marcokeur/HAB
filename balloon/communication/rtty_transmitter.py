@@ -8,9 +8,16 @@ from subscriber import Subscriber
 
 TELEMETRY_EVERY = 4
 BROKER_URL = "tcp://localhost:5559"
+
+# Topics
 GOOD_IMAGES_TOPIC = "/camera/picture/processed/location"
 HUMIDITY_TOPIC = "/sensor/humidity"
 GPS_TOPIC = "/sensor/gps/location"
+TEMP_INTERNAL_TOPIC = "/sensor/temperature/inside"
+TEMP_EXTENAL_TOPIC = "/sensor/temperature/outside"
+AIR_PRESSURE_TOPIC = "/sensor/airpressure"
+
+# NTX2 Configuration
 NTX2_UART = "UART5"
 NTX2_PORT = "/dev/ttyO5"
 
@@ -28,7 +35,7 @@ class RTTY_Transmitter:
 		self.ssdv = SSDV()
 		
 		# Image receiver
-		self.subscriber = Subscriber(BROKER_URL, [GOOD_IMAGES_TOPIC, HUMIDITY_TOPIC, GPS_TOPIC])
+		self.subscriber = Subscriber(BROKER_URL, [GOOD_IMAGES_TOPIC, HUMIDITY_TOPIC, GPS_TOPIC, TEMP_INTERNAL_TOPIC, TEMP_EXTENAL_TOPIC, AIR_PRESSURE_TOPIC])
 		self.subscriber.start()
 		
 		self.image_id = 1
@@ -37,46 +44,23 @@ class RTTY_Transmitter:
 
 	def run(self):
 		'''Read last good image, telemetry data and send with NTX2 transmitter'''
-
 		while True:
-			# Get latest image file from zeromq and generate SSDV packets
-			image_file = self.subscriber.get(GOOD_IMAGES_TOPIC)
-			if image_file != None:
-				self.send_image_with_telemetry(image_file)
-			else:
-				self.send_telemetry()
+			try:
+				# Get latest image file from zeromq and generate SSDV packets
+				image_file = self.subscriber.get(GOOD_IMAGES_TOPIC)
+				if image_file != None:
+					self.send_image_with_telemetry(image_file)
+				else:
+					self.send_telemetry()
+			except Exception, e:
+				raise e
 		
 
 	def send_telemetry(self):
 		'''Get and send telemetry data'''
-		
-		# Get GPS data
-		gps_string = self.subscriber.get(GPS_TOPIC)
-		lat = float(0.0)
-		lon = float(0.0)
-		alt = 0
-		if gps_string != None:
-			gps = gps_string.split(",")
-			lat = float(gps[0])
-			lon = float(gps[1])
-			alt = int(float(gps[2]))
-		
-		# Get humidity
-		humidity = self.subscriber.get(HUMIDITY_TOPIC)
-		if humidity == None:
-			humidity = 0
-			
-		
-		# Create TelemetryPacket
-		telemetry = TelemetryPacket(callsign='altran', 
-									sentence_id=self.sentence_id, 
-									lat=lat, 
-									lon=lon, 
-									alt=alt, 
-									in_temp=0.0, 
-									out_temp=0.0, 
-									humidity=int(humidity), 
-									air_pressure=100)
+
+		# Get and build a telemetry packet
+		telemetry = self._buildTelemetryPacket()
 		
 		# Generate telemetry sentence with CRC checksum
 		sentence = telemetry.to_sentence()
@@ -99,6 +83,62 @@ class RTTY_Transmitter:
 			i += 1
 			
 		self.image_id += 1	
+		
+		
+	def _buildTelemetryPacket(self):
+		gps_data = self._getGPSdata()
+		humidity = self._getHumidity()
+		internal_temp = self._getInternalTemperature()
+		external_temp = self._getExternalTemperature()
+		air_pressure = self._getAirPressure()
+		
+		telemetry = TelemetryPacket(callsign='altran', 
+		 							sentence_id=self.sentence_id, 
+		 							lat=gps_data['lat'], 
+		 							lon=gps_data['lon'], 
+		 							alt=gps_data['alt'], 
+		 							in_temp=internal_temp, 
+		 							out_temp=external_temp, 
+		 							humidity=humidity, 
+		 							air_pressure=air_pressure)
+		return telemetry
+		
+	def _getGPSdata(self):
+		gps_string = self.subscriber.get(GPS_TOPIC)
+		gps_data = { 'lat' : float(0.0000), 
+					 'lon' : float(0.0000),
+					 'alt' : int(0) }
+		if gps_string != None:
+			gps = gps_string.split(",")
+			gps_data['lat'] = float(gps[0])
+			gps_data['lon'] = float(gps[1])
+			gps_data['alt'] = int(float(gps[2]))
+		return gps_data
+		
+	
+	def _getHumidity(self):
+		humidity = self.subscriber.get(HUMIDITY_TOPIC)
+		if humidity == None:
+			humidity = 0
+		return int(humidity)
+		
+	def _getInternalTemperature(self):
+		temp = self.subscriber.get(TEMP_INTERNAL_TOPIC)
+		if temp == None:
+			temp = float(0.0)
+		return float(temp)
+		
+	def _getExternalTemperature(self):
+		temp = self.subscriber.get(TEMP_EXTENAL_TOPIC)
+		if temp == None:
+			temp = float(0.0)
+		return float(temp)
+		
+	def _getAirPressure(self):
+		air_pressure = self.subscriber.get(AIR_PRESSURE_TOPIC)
+		if air_pressure == None:
+			air_pressure = 0
+		return int(air_pressure)
 
 
 if __name__ == "__main__":
