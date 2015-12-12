@@ -20,6 +20,9 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+    
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
     {block name="head_extra"}{/block}
     

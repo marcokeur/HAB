@@ -19,5 +19,5 @@ class NTX2_Transmitter:
 
     def transmit(self, text):
          '''Transmit text with the NTX2 transmitter'''
-        if self.serial.isOpen():
+         if self.serial.isOpen():
             self.serial.write(text)

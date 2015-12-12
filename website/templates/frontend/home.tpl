@@ -72,6 +72,21 @@
             </div>
         </div>
 
+       <div class="row" ng-controller="sensorCtrl">
+            <div class="col-md-9">
+                <h3>HAB Info</h3>
+                <p>{literal}1 + 2 = {{ 1 + 2 }}{/literal}</p>
+
+                <ul>
+                  <li ng-repeat="x in names">
+                    {literal} {{ x.id + ', ' + x.latitude + ',' +  x.longitude }} {/literal}
+                  </li>
+                </ul>   
+
+            </div>
+        </div>
+        
+        
        <div class="row">
             <div class="col-md-9">
                 <h3>HAB Info</h3>
@@ -86,5 +101,7 @@
             
                 
             </div>
-        </div>      
+        </div>
+        
+     
 {/block}
