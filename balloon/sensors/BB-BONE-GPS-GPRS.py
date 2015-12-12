@@ -46,7 +46,7 @@ while True:
                         if pos[5] == 'W':
                                 lonEW = "-"
 
-                         latDec = (float(pos[1]) / 60) + float(pos[0])
+                        latDec = (float(pos[1]) / 60) + float(pos[0])
                         lonDec = (float(pos[4]) / 60) + float(pos[3])
                         height = float(pos[7])
 
