@@ -36,16 +36,20 @@ class RTTY_Transmitter:
 		
 		# Image receiver
 		self.subscriber = Subscriber(BROKER_URL, [GOOD_IMAGES_TOPIC, HUMIDITY_TOPIC, GPS_TOPIC, TEMP_INTERNAL_TOPIC, TEMP_EXTENAL_TOPIC, AIR_PRESSURE_TOPIC])
+		self.subscriber.daemon = True
 		self.subscriber.start()
 		
 		self.image_id = 1
 		self.sentence_id = 1
-
+		threading.Thread.__init__ (self)
+		
+	def stop(self):
+		self.subscriber.join()
 
 	def run(self):
 		'''Read last good image, telemetry data and send with NTX2 transmitter'''
-		while True:
-			try:
+		try:
+			while True:
 				# Get latest image file from zeromq and generate SSDV packets
 				image_file = self.subscriber.get(GOOD_IMAGES_TOPIC)
 				if image_file != None:
@@ -53,8 +57,8 @@ class RTTY_Transmitter:
 				else:
 					self.send_telemetry()
 					time.sleep(5)
-			except Exception, e:
-				print "Exception in rtty_transmitter.py run method"
+		except Exception, e:
+			print e
 		
 
 	def send_telemetry(self):
@@ -141,5 +145,8 @@ class RTTY_Transmitter:
 
 
 if __name__ == "__main__":
-    rtty_transmitter = RTTY_Transmitter()
-    rtty_transmitter.run()
+	try:
+		rtty_transmitter = RTTY_Transmitter()
+		rtty_transmitter.run()
+	except KeyboardInterrupt:
+		rtty_transmitter.stop()
