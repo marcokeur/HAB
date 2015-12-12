@@ -1,3 +1,5 @@
+#include <unistd.h>
+#include <sstream>
 #include "../imageprocessing/imageprocessor.hpp"
 #include "../logging/logging.hpp"
 #include "zmq.hpp"
@@ -21,7 +23,10 @@ static const std::string IN_TOPIC = INCOMING_TOPIC;
 static const std::string OUT_TOPIC = OUTGOING_TOPIC;
 
 int main(int argc, char **argv) {
-    logger->info("Started image processing module...");
+    int pid = (int) getpid();
+    std::stringstream ss;
+    ss << "Started image processing module with pid " << pid;
+    logger->info(ss.str());
 
     logger->info(IN_TOPIC);
 
@@ -41,20 +46,23 @@ int main(int argc, char **argv) {
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
     while(true) {
         subscriber.recv(&topic_header);
-        subscriber.recv(&message);
+        std::string header_str(static_cast<char *>(topic_header.data()), topic_header.size());
+        if(header_str.compare(IN_TOPIC) == 0) {
+            subscriber.recv(&message);
 
-        std::string msg_str(static_cast<char *>(message.data()), message.size());
+            std::string msg_str(static_cast<char *>(message.data()), message.size());
 
-        logger->info("Received location: " + msg_str);
+            logger->info("Received location: " + msg_str);
 
-        const Input *const input = new Input(msg_str);
-        const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
+            const Input *const input = new Input(msg_str);
+            const std::unique_ptr<const Result> result = imageprocessor::processImage(input);
 
-        logger->info(result->message);
+            logger->info(result->message);
 
-        if (result->send) {
-            publisher.send(OUT_TOPIC.data(), OUT_TOPIC.size(), ZMQ_SNDMORE);
-            publisher.send(result->editedImageFile.data(), result->editedImageFile.size(), 0);
+            if (result->send) {
+                publisher.send(OUT_TOPIC.data(), OUT_TOPIC.size(), ZMQ_SNDMORE);
+                publisher.send(result->editedImageFile.data(), result->editedImageFile.size(), 0);
+            }
         }
     }
 #pragma clang diagnostic pop
